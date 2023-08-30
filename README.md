@@ -1,2 +1,2 @@
 # objc
-V bindings to Objective-C Runtime.
+V bindings to Objective-C runtime.
