@@ -12,20 +12,34 @@ type FN_SEND_MSG_RECT[A, R] = fn (&Id, &C.objc_selector, A) R
 
 type FN_SEND_MSG_STRET[R] = fn (&Id, &C.objc_selector, ...voidptr) R
 
-pub struct Args0 {}
+pub interface Invokable[R] {
+	invoke(id &Id, op Sel) R
+}
 
-pub struct Args1[A] {
+pub struct Args0[R] {}
+
+pub fn (a Args0[R]) invoke(id &Id, op Sel) R {
+	return invoke0[R](id, op)
+}
+
+pub struct Args1[R, A] {
 	arg1 A
 }
 
-pub fn (id &Id) send_message[R, A](op Sel, args A) R {
-	$if args is Args1 {
-		return invoke1(id, op, args.arg1)
+pub fn (a Args1[R, A]) invoke(id &Id, op Sel) R {
+	return invoke1[R, A](id, op, a.arg1)
+}
+
+pub fn (id &Id) send_message[R](op Sel, args Invokable[R]) R {
+	return args.invoke(id, op)
+	/*$if args is Invokable[R] {
+		return args.invoke[R](id, op)
+		// return invoke1[R, T](id, op, args.arg1)
 	} $else $if args is Args0 {
 		return invoke0[R](id, op)
 	} $else {
 		$compile_error('args is not supported')
-	}
+	}*/
 }
 
 fn invoke0[R](id &Id, op Sel) R {

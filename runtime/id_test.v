@@ -12,12 +12,14 @@ fn test_send_message() {
 			width: 400.0
 		}
 	}
-	obj := cls.class.send_message[&Id, Args0](Sel.get('alloc'), Args0{}).send_message_rect[CGRect, &Id](Sel.get('initWithFrame:'),
+	obj := cls.class.send_message[&Id](Sel.get('alloc'), Args0[&Id]{}).send_message_rect[CGRect, &Id](Sel.get('initWithFrame:'),
 		rect)
 	// obj := cls.class.send_message[&Id](Sel.get('new'))
 
-	obj.send_message_f64[&Id](Sel.get('setFrameRotation:'), f64(20))
-	rotation := obj.send_message[f64, Args0](Sel.get('frameRotation'), Args0{})
+	obj.send_message[&Id](Sel.get('setFrameRotation:'), Args1[&Id, f64]{
+		arg1: f64(20)
+	})
+	rotation := obj.send_message[f64](Sel.get('frameRotation'), Args0[f64]{})
 	assert rotation == 20
 
 	frame := obj.send_message_stret[CGRect](Sel.get('frame'))
