@@ -6,6 +6,8 @@ pub struct Class {
 	class &Id [required] // the Objective-C Class object
 }
 
+// Class.get returns the class definition of a specified class. It returns `none` if
+// the class is not registered with the Objective-C runtime.
 pub fn Class.get(name string) ?Class {
 	unsafe {
 		class := C.objc_getClass(&char(name.str))
