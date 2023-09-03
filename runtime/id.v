@@ -93,25 +93,25 @@ pub fn (id Id) message(op Sel) MessageBuilder {
 
 fn invoke0[R](id Id, op Sel) R {
 	msg_send_fn := unsafe { FN_SEND_MSG_0[R](C.objc_msgSend) }
-	return msg_send_fn[R](id.ptr, op.sel)
+	return msg_send_fn[R](id.ptr, op.ptr)
 }
 
 fn invoke1[R, A](id Id, op Sel, arg1 A) R {
 	msg_send_fn := unsafe { FN_SEND_MSG_1[R, A](C.objc_msgSend) }
-	return msg_send_fn[R, A](id.ptr, op.sel, arg1)
+	return msg_send_fn[R, A](id.ptr, op.ptr, arg1)
 }
 
 pub fn (id Id) send_message_f64[R](op Sel, v f64) R {
 	msg_send_fn := unsafe { FN_SEND_MSG[R](C.objc_msgSend) }
-	return msg_send_fn[R](id.ptr, op.sel, v)
+	return msg_send_fn[R](id.ptr, op.ptr, v)
 }
 
 pub fn (id Id) send_message_rect[A, R](op Sel, rect A) R {
 	msg_send_fn := unsafe { FN_SEND_MSG_RECT[A, R](C.objc_msgSend) }
-	return msg_send_fn[A, R](id.ptr, op.sel, rect)
+	return msg_send_fn[A, R](id.ptr, op.ptr, rect)
 }
 
 pub fn (id Id) send_message_stret[R](op Sel, args ...voidptr) R {
 	msg_send_fn := unsafe { FN_SEND_MSG_STRET[R](C.objc_msgSend_stret) }
-	return msg_send_fn[R](id.ptr, op.sel, ...args)
+	return msg_send_fn[R](id.ptr, op.ptr, ...args)
 }

@@ -2,7 +2,7 @@ module runtime
 
 fn test_send_message() {
 	cls := Class.get('NSView') or { panic('failed to load class') }
-	cls_obj := Id{cls.class}
+	cls_obj := Id{cls.ptr}
 	rect := C.CGRect{
 		origin: C.CGPoint{
 			x: 10.0
