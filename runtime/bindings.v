@@ -1,5 +1,7 @@
 module runtime
 
+// This file defines the bindings for Objective-C runtime classes and functions.
+
 #flag -lobjc
 #include <objc/runtime.h>
 #include <objc/message.h>
