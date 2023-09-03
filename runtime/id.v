@@ -1,24 +1,27 @@
 module runtime
 
-type Id = C.objc_object
+[noinit]
+pub struct Id {
+	ptr &C.objc_object [required]
+}
 
-type FN_SEND_MSG_0[R] = fn (&Id, &C.objc_selector) R
+type FN_SEND_MSG_0[R] = fn (&C.objc_object, &C.objc_selector) R
 
-type FN_SEND_MSG_1[R, A] = fn (&Id, &C.objc_selector, A) R
+type FN_SEND_MSG_1[R, A] = fn (&C.objc_object, &C.objc_selector, A) R
 
-type FN_SEND_MSG[R] = fn (&Id, &C.objc_selector, ...voidptr) R
+type FN_SEND_MSG[R] = fn (&C.objc_object, &C.objc_selector, ...voidptr) R
 
-type FN_SEND_MSG_RECT[A, R] = fn (&Id, &C.objc_selector, A) R
+type FN_SEND_MSG_RECT[A, R] = fn (&C.objc_object, &C.objc_selector, A) R
 
-type FN_SEND_MSG_STRET[R] = fn (&Id, &C.objc_selector, ...voidptr) R
+type FN_SEND_MSG_STRET[R] = fn (&C.objc_object, &C.objc_selector, ...voidptr) R
 
 pub interface Invokable[R] {
-	invoke(id &Id, op Sel) R
+	invoke(id Id, op Sel) R
 }
 
 pub struct Args0[R] {}
 
-pub fn (a Args0[R]) invoke(id &Id, op Sel) R {
+pub fn (a Args0[R]) invoke(id Id, op Sel) R {
 	return invoke0[R](id, op)
 }
 
@@ -26,11 +29,11 @@ pub struct Args1[R, A] {
 	arg1 A
 }
 
-pub fn (a Args1[R, A]) invoke(id &Id, op Sel) R {
+pub fn (a Args1[R, A]) invoke(id Id, op Sel) R {
 	return invoke1[R, A](id, op, a.arg1)
 }
 
-pub fn (id &Id) send_message[R](op Sel, args Invokable[R]) R {
+pub fn (id Id) send_message[R](op Sel, args Invokable[R]) R {
 	return args.invoke(id, op)
 	/*$if args is Invokable[R] {
 		return args.invoke[R](id, op)
@@ -44,13 +47,13 @@ pub fn (id &Id) send_message[R](op Sel, args Invokable[R]) R {
 
 [noinit]
 struct MessageBuilder {
-	id &Id [required]
+	id Id  [required]
 	op Sel [required]
 }
 
 [noinit]
 struct Message0[R] {
-	id &Id [required]
+	id Id  [required]
 	op Sel [required]
 }
 
@@ -66,13 +69,16 @@ pub fn (b MessageBuilder) return_type[R]() Message0[R] {
 	return Message0[R]{b.id, b.op}
 }
 
-pub fn (b MessageBuilder) send() &Id {
-	return invoke0[&Id](b.id, b.op)
+type ObjPtr = C.objc_object
+
+pub fn (b MessageBuilder) send() Id {
+	id := invoke0[&ObjPtr](b.id, b.op)
+	return Id{id}
 }
 
 [noinit]
 struct MessageArg1[A] {
-	id &Id [required]
+	id Id  [required]
 	op Sel [required]
 	a  A
 }
@@ -81,31 +87,31 @@ pub fn (a1 MessageArg1[A]) send[R]() R {
 	return invoke1[R, A](a1.id, a1.op, a1.a)
 }
 
-pub fn (id &Id) message(op Sel) MessageBuilder {
-	return unsafe { MessageBuilder{id, op} }
+pub fn (id Id) message(op Sel) MessageBuilder {
+	return MessageBuilder{id, op}
 }
 
-fn invoke0[R](id &Id, op Sel) R {
+fn invoke0[R](id Id, op Sel) R {
 	msg_send_fn := unsafe { FN_SEND_MSG_0[R](C.objc_msgSend) }
-	return msg_send_fn[R](id, op.sel)
+	return msg_send_fn[R](id.ptr, op.sel)
 }
 
-fn invoke1[R, A](id &Id, op Sel, arg1 A) R {
+fn invoke1[R, A](id Id, op Sel, arg1 A) R {
 	msg_send_fn := unsafe { FN_SEND_MSG_1[R, A](C.objc_msgSend) }
-	return msg_send_fn[R, A](id, op.sel, arg1)
+	return msg_send_fn[R, A](id.ptr, op.sel, arg1)
 }
 
-pub fn (id &Id) send_message_f64[R](op Sel, v f64) R {
+pub fn (id Id) send_message_f64[R](op Sel, v f64) R {
 	msg_send_fn := unsafe { FN_SEND_MSG[R](C.objc_msgSend) }
-	return msg_send_fn[R](id, op.sel, v)
+	return msg_send_fn[R](id.ptr, op.sel, v)
 }
 
-pub fn (id &Id) send_message_rect[A, R](op Sel, rect A) R {
+pub fn (id Id) send_message_rect[A, R](op Sel, rect A) R {
 	msg_send_fn := unsafe { FN_SEND_MSG_RECT[A, R](C.objc_msgSend) }
-	return msg_send_fn[A, R](id, op.sel, rect)
+	return msg_send_fn[A, R](id.ptr, op.sel, rect)
 }
 
-pub fn (id &Id) send_message_stret[R](op Sel, args ...voidptr) R {
+pub fn (id Id) send_message_stret[R](op Sel, args ...voidptr) R {
 	msg_send_fn := unsafe { FN_SEND_MSG_STRET[R](C.objc_msgSend_stret) }
-	return msg_send_fn[R](id, op.sel, ...args)
+	return msg_send_fn[R](id.ptr, op.sel, ...args)
 }

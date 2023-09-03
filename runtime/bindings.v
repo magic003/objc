@@ -10,7 +10,7 @@ struct C.objc_object {}
 
 struct C.objc_selector {}
 
-fn C.objc_getClass(&char) &Id
+fn C.objc_getClass(&char) &C.objc_object
 fn C.sel_registerName(&char) &C.objc_selector
 
 fn C.objc_msgSend()

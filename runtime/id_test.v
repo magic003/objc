@@ -2,6 +2,7 @@ module runtime
 
 fn test_send_message() {
 	cls := Class.get('NSView') or { panic('failed to load class') }
+	cls_obj := Id{cls.class}
 	rect := C.CGRect{
 		origin: C.CGPoint{
 			x: 10.0
@@ -14,8 +15,8 @@ fn test_send_message() {
 	}
 	// obj := cls.class.send_message[&Id](Sel.get('alloc'), Args0[&Id]{}).send_message_rect[CGRect, &Id](Sel.get('initWithFrame:'),
 	// rect)
-	obj := cls.class.message(Sel.get('alloc')).send().send_message_rect[CGRect, &Id](Sel.get('initWithFrame:'),
-		rect)
+	obj := Id{cls_obj.message(Sel.get('alloc')).send().send_message_rect[CGRect, &ObjPtr](Sel.get('initWithFrame:'),
+		rect)}
 	// obj := cls.class.send_message[&Id](Sel.get('new'))
 
 	/*
