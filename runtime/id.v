@@ -42,6 +42,49 @@ pub fn (id &Id) send_message[R](op Sel, args Invokable[R]) R {
 	}*/
 }
 
+[noinit]
+struct MessageBuilder {
+	id &Id [required]
+	op Sel [required]
+}
+
+[noinit]
+struct Message0[R] {
+	id &Id [required]
+	op Sel [required]
+}
+
+pub fn (m Message0[R]) send() R {
+	return invoke0[R](m.id, m.op)
+}
+
+pub fn (b MessageBuilder) add_1_arg[A](arg1 A) MessageArg1[A] {
+	return MessageArg1[A]{b.id, b.op, arg1}
+}
+
+pub fn (b MessageBuilder) return_type[R]() Message0[R] {
+	return Message0[R]{b.id, b.op}
+}
+
+pub fn (b MessageBuilder) send() &Id {
+	return invoke0[&Id](b.id, b.op)
+}
+
+[noinit]
+struct MessageArg1[A] {
+	id &Id [required]
+	op Sel [required]
+	a  A
+}
+
+pub fn (a1 MessageArg1[A]) send[R]() R {
+	return invoke1[R, A](a1.id, a1.op, a1.a)
+}
+
+pub fn (id &Id) message(op Sel) MessageBuilder {
+	return unsafe { MessageBuilder{id, op} }
+}
+
 fn invoke0[R](id &Id, op Sel) R {
 	msg_send_fn := unsafe { FN_SEND_MSG_0[R](C.objc_msgSend) }
 	return msg_send_fn[R](id, op.sel)
