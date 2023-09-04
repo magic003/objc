@@ -12,14 +12,14 @@ pub fn (b MsgBuilder) args1[A](a A) MsgArgs1[A] {
 	return MsgArgs1[A]{b.id, b.op, a}
 }
 
-// return_type sets the return type of the message.
-pub fn (b MsgBuilder) return_type[R]() Msg0[R] {
-	return Msg0[R]{b.id, b.op}
+// request sends a message requesting a value of type `R`.
+pub fn (b MsgBuilder) request[R]() R {
+	return send_msg_0[R](b.id, b.op)
 }
 
-// send sends the message without a return value.
-pub fn (b MsgBuilder) send() {
-	send_msg_0[&ObjStruct](b.id, b.op)
+// notify sends the message without a return value.
+pub fn (b MsgBuilder) notify() {
+	b.request[&ObjStruct]()
 }
 
 // A type that represents a message with 0 argument and return type of `R`.

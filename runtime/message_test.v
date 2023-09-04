@@ -18,7 +18,7 @@ fn test_send_message() {
 	/*
 	mut obj := cls_obj.message(Sel.get('alloc')).return_type[Id]().send()
 	obj.message(Sel.get('initWithFrame:')).args1(rect).return_type[Id]().send()*/
-	mut obj := cls_obj.message(Sel.get('alloc')).return_type[ID]().send()
+	mut obj := cls_obj.message(Sel.get('alloc')).request[ID]()
 	obj = obj.message(Sel.get('initWithFrame:')).args1(rect).send[ID]()
 	//.send_message_rect[CGRect, &ObjStruct](Sel.get('initWithFrame:'), rect)}
 	// obj := cls.class.send_message[&Id](Sel.get('new'))
@@ -29,10 +29,10 @@ fn test_send_message() {
 	})*/
 	obj.message(Sel.get('setFrameRotation:')).args1(f64(20)).send[ID]()
 	// rotation := obj.send_message[f64](Sel.get('frameRotation'), Args0[f64]{})
-	rotation := obj.message(Sel.get('frameRotation')).return_type[f64]().send()
+	rotation := obj.message(Sel.get('frameRotation')).request[f64]()
 	assert rotation == 20
 
-	frame := obj.message(Sel.get('frame')).return_type[CGRect]().send()
+	frame := obj.message(Sel.get('frame')).request[CGRect]()
 	assert frame.origin.x == 10.0
 	assert frame.origin.y == 20.0
 	assert frame.size.height == 300.0
