@@ -22,17 +22,14 @@ pub fn (b MsgBuilder) send() {
 	invoke0[&ObjStruct](b.id, b.op)
 }
 
-// A type that represents a message with 0 argument. The generic type `R` specifies the
-// return type of this message.
+// A type that represents a message with 0 argument and return type of `R`.
 [noinit]
 struct Msg0[R] {
 	id &C.objc_object   [required]
 	op &C.objc_selector [required]
 }
 
-// send sends the message.
-//
-// The generic type `R` is the return type.
+// send sends the message with a return value of type `R`.
 pub fn (m Msg0[R]) send() R {
 	$if R is Id {
 		id := invoke0[&ObjStruct](m.id, m.op)
@@ -59,8 +56,7 @@ pub fn (m MsgArgs1[A]) send() {
 	invoke1[&ObjStruct, A](m.id, m.op, m.a)
 }
 
-// A type that represents a message with 1 argument. The generic type `R` specifies the
-// return type of this message.
+// A type that represents a message with 1 argument of `A` and return type of `R`.
 [noinit]
 struct Msg1[R, A] {
 	id &C.objc_object   [required]
@@ -68,10 +64,12 @@ struct Msg1[R, A] {
 	a  A                [required]
 }
 
-// send sends the message.
-//
-// The generic type `R` is the return type.
+// send sends the message with a return value of type `R`.
 pub fn (m Msg1[R, A]) send() R {
+	$if R is Id {
+		id := invoke1[&ObjStruct, A](m.id, m.op, m.a)
+		return Id{id}
+	}
 	return invoke1[R, A](m.id, m.op, m.a)
 }
 
