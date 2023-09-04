@@ -6,8 +6,10 @@ module runtime
 #include <objc/runtime.h>
 #include <objc/message.h>
 
+[heap]
 struct C.objc_object {}
 
+[heap]
 struct C.objc_selector {}
 
 fn C.objc_getClass(&char) &C.objc_object

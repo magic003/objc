@@ -8,3 +8,11 @@ pub struct Id {
 pub fn (id Id) message(op Sel) MsgBuilder {
 	return MsgBuilder{id.ptr, op.ptr}
 }
+
+type ID = voidptr
+
+pub fn (id ID) message(op Sel) MsgBuilder {
+	unsafe {
+		return MsgBuilder{&C.objc_object(id), op.ptr}
+	}
+}
