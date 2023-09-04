@@ -8,8 +8,8 @@ struct MsgBuilder {
 }
 
 // args1 adds 1 argument to the message.
-pub fn (b MsgBuilder) args1[A](a A) MsgArgs1[A] {
-	return MsgArgs1[A]{b.id, b.op, a}
+pub fn (b MsgBuilder) args1[A](a A) Msg1[A] {
+	return Msg1[A]{b.id, b.op, a}
 }
 
 // request sends a message requesting a value of type `R`.
@@ -17,79 +17,27 @@ pub fn (b MsgBuilder) request[R]() R {
 	return send_msg_0[R](b.id, b.op)
 }
 
-// notify sends the message without a return value.
+// notify sends a message without a return value.
 pub fn (b MsgBuilder) notify() {
-	b.request[&ObjStruct]()
+	send_msg_0[&ObjStruct](b.id, b.op)
 }
 
-// A type that represents a message with 0 argument and return type of `R`.
+// A type that represents a message having 1 argument.
 [noinit]
-struct Msg0[R] {
-	id &C.objc_object   [required]
-	op &C.objc_selector [required]
-}
-
-// send sends the message with a return value of type `R`.
-pub fn (m Msg0[R]) send() R {
-	$if R is Id {
-		id := send_msg_0[&ObjStruct](m.id, m.op)
-		println('msg0 type is: ${typeof(id).name}')
-		return Id{id}
-	} $else {
-		$if R is CGRect {
-			$compile_warn('Msg0[R] send(): R is CGRect')
-		}
-		return send_msg_0[R](m.id, m.op)
-	}
-}
-
-// A type that represents 1 argument in a message.
-[noinit]
-struct MsgArgs1[A] {
+struct Msg1[A] {
 	id &C.objc_object   [required]
 	op &C.objc_selector [required]
 	a  A                [required]
 }
 
-// return_type sets the return type of the message.
-pub fn (m MsgArgs1[A]) return_type[R]() Msg1[R, A] {
-	return Msg1[R, A]{m.id, m.op, m.a}
-}
-
-// send sends the message without a return value.
-pub fn (m MsgArgs1[A]) send[R]() R {
-	$if R is ID {
-		$compile_warn('MsgArgs1 send[R] is ID')
-	}
+// request sends a message requesting for a value of type `R`.
+pub fn (m Msg1[A]) request[R]() R {
 	return send_msg_1[R, A](m.id, m.op, m.a)
 }
 
-// A type that represents a message with 1 argument of `A` and return type of `R`.
-[noinit]
-struct Msg1[R, A] {
-	id &C.objc_object   [required]
-	op &C.objc_selector [required]
-	a  A                [required]
-}
-
-// send sends the message with a return value of type `R`.
-pub fn (m Msg1[R, A]) send() R {
-	$if R is Id {
-		/*
-		id := send_msg_0[&ObjStruct](m.id, m.op)
-		println('msg1 type is: ${typeof(id).name}')
-		return Id{id}*/
-		i1 := Invoke1[A, &ObjStruct]{
-			id: m.id
-			op: m.op
-			a: m.a
-		}
-		return Id{i1.invoke()}
-	} $else {
-		$compile_warn('msg1 send in else')
-		// return send_msg_0[R](m.id, m.op)
-		return new_invoke1[A, R](m.id, m.op, m.a).invoke()
-	}
+// notify sends a message without a return value.
+pub fn (m Msg1[A]) notify() {
+	send_msg_1[&ObjStruct, A](m.id, m.op, m.a)
 }
 
 // The `&C.objc_object` cannot be used as a type in generics. Not sure if it is a

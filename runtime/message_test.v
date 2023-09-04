@@ -19,7 +19,7 @@ fn test_send_message() {
 	mut obj := cls_obj.message(Sel.get('alloc')).return_type[Id]().send()
 	obj.message(Sel.get('initWithFrame:')).args1(rect).return_type[Id]().send()*/
 	mut obj := cls_obj.message(Sel.get('alloc')).request[ID]()
-	obj = obj.message(Sel.get('initWithFrame:')).args1(rect).send[ID]()
+	obj = obj.message(Sel.get('initWithFrame:')).args1(rect).request[ID]()
 	//.send_message_rect[CGRect, &ObjStruct](Sel.get('initWithFrame:'), rect)}
 	// obj := cls.class.send_message[&Id](Sel.get('new'))
 
@@ -27,7 +27,7 @@ fn test_send_message() {
 	obj.send_message[&Id](Sel.get('setFrameRotation:'), Args1[&Id, f64]{
 		arg1: f64(20)
 	})*/
-	obj.message(Sel.get('setFrameRotation:')).args1(f64(20)).send[ID]()
+	obj.message(Sel.get('setFrameRotation:')).args1(f64(20)).notify()
 	// rotation := obj.send_message[f64](Sel.get('frameRotation'), Args0[f64]{})
 	rotation := obj.message(Sel.get('frameRotation')).request[f64]()
 	assert rotation == 20
