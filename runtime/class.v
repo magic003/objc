@@ -17,3 +17,8 @@ pub fn Class.get(name string) ?Class {
 		return none
 	}
 }
+
+// message creates a message with the class instance as the receiver and `op` as the method selector.
+pub fn (c Class) message(op Sel) MsgBuilder {
+	return MsgBuilder{c.ptr, op.ptr}
+}
