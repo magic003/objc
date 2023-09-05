@@ -19,7 +19,7 @@ pub fn (b MsgBuilder) request[R]() R {
 
 // notify sends a message without a return value.
 pub fn (b MsgBuilder) notify() {
-	send_msg_0[&ObjStruct](b.id, b.op)
+	send_msg_0[ID](b.id, b.op)
 }
 
 // A type that represents a message having 1 argument.
@@ -37,13 +37,8 @@ pub fn (m Msg1[A]) request[R]() R {
 
 // notify sends a message without a return value.
 pub fn (m Msg1[A]) notify() {
-	send_msg_1[&ObjStruct, A](m.id, m.op, m.a)
+	send_msg_1[ID, A](m.id, m.op, m.a)
 }
-
-// The `&C.objc_object` cannot be used as a type in generics. Not sure if it is a
-// V bug or I didn't use it correctly. Defining a type alias and using `&ObjStruct` works.
-// This type should only be used for such workaround.
-type ObjStruct = C.objc_object
 
 // It represents the generic signature of objc_msgSend and objc_msgSend_stret functions.
 type FnSendMsgGeneric = fn ()
@@ -91,11 +86,6 @@ struct Invoke1[A, T] {
 }
 
 fn (i Invoke1[A, T]) invoke() T {
-	$if T is &ObjStruct {
-		$compile_warn('invoke return &ObjStruct')
-	} $else $if T is ID {
-		$compile_warn('invoke return ID')
-	}
 	msg_send_fn := i.get_msg_send_fn()
 	casted_fn := unsafe { FN_SEND_MSG_1[T](msg_send_fn) }
 	return casted_fn[A, T](i.id, i.op, i.a)
@@ -133,16 +123,6 @@ fn send_msg_1[R, A](id &C.objc_object, op &C.objc_selector, a A) R {
 	}
 	msg_send_fn := get_msg_send_fn[R]()
 	casted_fn := unsafe { FN_SEND_MSG_1[R, A](msg_send_fn) }
-	/*$if casted_fn is FN_SEND_MSG_1[CGRect, ID] {
-		$compile_warn('type is correct')
-	} $else {
-		$compile_warn('type is incorrect')
-	}
-	$if T is Id {
-		$compile_warn('send_msg_1: is Id')
-	} $else $if T is &ObjStruct {
-		$compile_warn('send_msg_1: is &OjbStruct')
-	}*/
 	return casted_fn[R, A](id, op, a)
 }
 
