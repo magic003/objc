@@ -2,7 +2,7 @@ module runtime
 
 fn test_send_message() {
 	cls := Class.get('NSView') or { panic('failed to load class') }
-	cls_obj := Id{cls.ptr}
+	cls_obj := Id(cls.ptr)
 	rect := CGRect{
 		origin: C.CGPoint{
 			x: 10.0
@@ -13,8 +13,8 @@ fn test_send_message() {
 			width: 400.0
 		}
 	}
-	mut obj := cls_obj.message(Sel.get('alloc')).request[ID]()
-	obj = obj.message(Sel.get('initWithFrame:')).args1(rect).request[ID]()
+	mut obj := cls_obj.message(Sel.get('alloc')).request[Id]()
+	obj = obj.message(Sel.get('initWithFrame:')).args1(rect).request[Id]()
 
 	obj.message(Sel.get('setFrameRotation:')).args1(f64(20)).notify()
 	rotation := obj.message(Sel.get('frameRotation')).request[f64]()

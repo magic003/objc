@@ -19,7 +19,7 @@ pub fn (b MsgBuilder) request[R]() R {
 
 // notify sends a message without a return value.
 pub fn (b MsgBuilder) notify() {
-	send_msg_0[ID](b.id, b.op)
+	send_msg_0[Id](b.id, b.op)
 }
 
 // A type that represents a message having 1 argument.
@@ -37,7 +37,7 @@ pub fn (m Msg1[A]) request[R]() R {
 
 // notify sends a message without a return value.
 pub fn (m Msg1[A]) notify() {
-	send_msg_1[ID, A](m.id, m.op, m.a)
+	send_msg_1[Id, A](m.id, m.op, m.a)
 }
 
 // It represents the generic signature of objc_msgSend and objc_msgSend_stret functions.
