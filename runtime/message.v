@@ -43,22 +43,27 @@ pub fn (m Msg1[A]) notify() {
 // It represents the generic signature of objc_msgSend and objc_msgSend_stret functions.
 type FnSendMsgGeneric = fn ()
 
-type FN_SEND_MSG_0[R] = fn (&C.objc_object, &C.objc_selector) R
+// Cast objc_msgSend* functions to this function for 0 argument and return type `R`.
+type FnSendMsg0[R] = fn (&C.objc_object, &C.objc_selector) R
 
-type FN_SEND_MSG_1[R, A] = fn (&C.objc_object, &C.objc_selector, A) R
+// Cast objc_msgSend* functions to this function for 1 argument and return type `R`.
+type FnSendMsg1[R, A] = fn (&C.objc_object, &C.objc_selector, A) R
 
+// send_msg_0 calls objc_msgSend* function for 0 argument and return type `R`.
 fn send_msg_0[R](id &C.objc_object, op &C.objc_selector) R {
 	msg_send_fn := get_msg_send_fn[R]()
-	casted_fn := unsafe { FN_SEND_MSG_0[R](msg_send_fn) }
+	casted_fn := unsafe { FnSendMsg0[R](msg_send_fn) }
 	return casted_fn[R](id, op)
 }
 
+// send_msg_1 calls objc_msgSend* function for 1 argument and return type `R`.
 fn send_msg_1[R, A](id &C.objc_object, op &C.objc_selector, a A) R {
 	msg_send_fn := get_msg_send_fn[R]()
-	casted_fn := unsafe { FN_SEND_MSG_1[R, A](msg_send_fn) }
+	casted_fn := unsafe { FnSendMsg1[R, A](msg_send_fn) }
 	return casted_fn[R, A](id, op, a)
 }
 
+// get_msg_send_fn determines which objc_msgSend* function to call based on `R`.
 fn get_msg_send_fn[R]() FnSendMsgGeneric {
 	// WARNING: this is a very naive way to decide calling objc_msgSend or objc_msgSend_stret.
 	// If the size of the return type is less or equal than the C pointer size, it assumes the value
