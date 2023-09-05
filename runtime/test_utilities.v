@@ -1,5 +1,6 @@
 module runtime
 
+// This file contains the Cocoa bindings used for unit tests.
 #include <Foundation/Foundation.h>
 #include <Cocoa/Cocoa.h>
 #flag -framework Foundation

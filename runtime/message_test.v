@@ -1,7 +1,7 @@
 module runtime
 
-fn test_send_message() {
-	cls := Class.get('NSView') or { panic('failed to load class') }
+fn test_send_message_ns_view() {
+	cls := Class.get('NSView') or { panic('failed to load class NSView') }
 	rect := CGRect{
 		origin: C.CGPoint{
 			x: 10.0
