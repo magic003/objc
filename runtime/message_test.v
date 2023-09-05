@@ -28,6 +28,35 @@ fn test_send_message_1_argument() {
 	assert contains == yes
 }
 
+fn test_send_message_2_arguments() {
+	str_cls := Class.get('NSString') or { panic('failed to load class NSString') }
+
+	cls := Class.get('NSMutableDictionary') or { panic('failed to load class NSMutableDictionary') }
+	dict := cls.message(Sel.get('dictionaryWithCapacity:')).args1(u64(5)).request[Id]()
+
+	k1 := str_cls.message(Sel.get('alloc')).request[Id]()
+		.message(Sel.get('initWithCString:encoding:')).args2(c'k1', u64(1)).request[Id]()
+	v1 := str_cls.message(Sel.get('alloc')).request[Id]()
+		.message(Sel.get('initWithCString:encoding:')).args2(c'v1', u64(1)).request[Id]()
+	dict.message(Sel.get('setValue:forKey:')).args2(v1, k1).notify()
+	mut size := dict.message(Sel.get('count')).request[u64]()
+	assert size == 1
+
+	k2 := str_cls.message(Sel.get('alloc')).request[Id]()
+		.message(Sel.get('initWithCString:encoding:')).args2(c'k2', u64(1)).request[Id]()
+	v2 := str_cls.message(Sel.get('alloc')).request[Id]()
+		.message(Sel.get('initWithCString:encoding:')).args2(c'v2', u64(1)).request[Id]()
+	dict.message(Sel.get('setValue:forKey:')).args2(v2, k2).notify()
+	size = dict.message(Sel.get('count')).request[u64]()
+	assert size == 2
+
+	v2_obj := dict.message(Sel.get('valueForKey:')).args1(k2).request[Id]()
+	v2_cstring := v2_obj.message(Sel.get('cStringUsingEncoding:')).args1(u64(1)).request[&char]()
+	unsafe {
+		assert v2_cstring.vstring() == 'v2'
+	}
+}
+
 fn test_send_message_ns_view() {
 	cls := Class.get('NSView') or { panic('failed to load class NSView') }
 	rect := CGRect{

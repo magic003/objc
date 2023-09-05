@@ -8,18 +8,23 @@ struct MsgBuilder {
 }
 
 // args1 adds 1 argument to the message.
-pub fn (b MsgBuilder) args1[A](a A) Msg1[A] {
-	return Msg1[A]{b.id, b.op, a}
+pub fn (m MsgBuilder) args1[A](a A) Msg1[A] {
+	return Msg1[A]{m.id, m.op, a}
+}
+
+// args2 adds 2 arguments to the message.
+pub fn (m MsgBuilder) args2[A, B](a A, b B) Msg2[A, B] {
+	return Msg2[A, B]{m.id, m.op, a, b}
 }
 
 // request sends a message requesting a value of type `R`.
-pub fn (b MsgBuilder) request[R]() R {
-	return send_msg_0[R](b.id, b.op)
+pub fn (m MsgBuilder) request[R]() R {
+	return send_msg_0[R](m.id, m.op)
 }
 
 // notify sends a message without a return value.
-pub fn (b MsgBuilder) notify() {
-	send_msg_0[Id](b.id, b.op)
+pub fn (m MsgBuilder) notify() {
+	send_msg_0[Id](m.id, m.op)
 }
 
 // A type that represents a message having 1 argument.
@@ -40,6 +45,25 @@ pub fn (m Msg1[A]) notify() {
 	send_msg_1[Id, A](m.id, m.op, m.a)
 }
 
+// A type that represents a message having 2 arguments.
+[noinit]
+struct Msg2[A, B] {
+	id &C.objc_object   [required]
+	op &C.objc_selector [required]
+	a  A                [required]
+	b  B                [required]
+}
+
+// request sends a message requesting for a value of type `R`.
+pub fn (m Msg2[A, B]) request[R]() R {
+	return send_msg_2[R, A, B](m.id, m.op, m.a, m.b)
+}
+
+// notify sends a message without a return value.
+pub fn (m Msg2[A, B]) notify() {
+	send_msg_2[Id, A, B](m.id, m.op, m.a, m.b)
+}
+
 // It represents the generic signature of objc_msgSend and objc_msgSend_stret functions.
 type FnSendMsgGeneric = fn ()
 
@@ -48,6 +72,9 @@ type FnSendMsg0[R] = fn (&C.objc_object, &C.objc_selector) R
 
 // Cast objc_msgSend* functions to this function for 1 argument and return type `R`.
 type FnSendMsg1[R, A] = fn (&C.objc_object, &C.objc_selector, A) R
+
+// Cast objc_msgSend* functions to this function for 2 arguments and return type `R`.
+type FnSendMsg2[R, A, B] = fn (&C.objc_object, &C.objc_selector, A, B) R
 
 // send_msg_0 calls objc_msgSend* function for 0 argument and return type `R`.
 fn send_msg_0[R](id &C.objc_object, op &C.objc_selector) R {
@@ -61,6 +88,13 @@ fn send_msg_1[R, A](id &C.objc_object, op &C.objc_selector, a A) R {
 	msg_send_fn := get_msg_send_fn[R]()
 	casted_fn := unsafe { FnSendMsg1[R, A](msg_send_fn) }
 	return casted_fn[R, A](id, op, a)
+}
+
+// send_msg_2 calls objc_msgSend* function for 2 arguments and return type `R`.
+fn send_msg_2[R, A, B](id &C.objc_object, op &C.objc_selector, a A, b B) R {
+	msg_send_fn := get_msg_send_fn[R]()
+	casted_fn := unsafe { FnSendMsg2[R, A, B](msg_send_fn) }
+	return casted_fn[R, A, B](id, op, a, b)
 }
 
 // get_msg_send_fn determines which objc_msgSend* function to call based on `R`.
