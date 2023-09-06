@@ -2,6 +2,9 @@ module main
 
 import magic003.objc { class, sel }
 
+#include <Foundation/Foundation.h>
+#flag -framework Foundation
+
 const ns_ascii_string_encoding = u64(1)
 
 fn main() {
