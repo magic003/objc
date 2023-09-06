@@ -1,4 +1,4 @@
-module runtime
+module objc
 
 // This file contains the Cocoa bindings used for unit tests.
 #include <Foundation/Foundation.h>

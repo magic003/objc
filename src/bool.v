@@ -1,4 +1,4 @@
-module runtime
+module objc
 
 // A type that represents a Boolean value in Objective-C.
 pub type Bool = bool

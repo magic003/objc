@@ -1,4 +1,4 @@
-module runtime
+module objc
 
 fn test_class_get() {
 	cls := Class.get('NSObject')

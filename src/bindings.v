@@ -1,4 +1,4 @@
-module runtime
+module objc
 
 // This file defines the bindings for Objective-C runtime classes and functions.
 

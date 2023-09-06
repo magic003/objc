@@ -1,4 +1,4 @@
-module runtime
+module objc
 
 // A pointer to an instance of a class. It represents the `id` type in Objective-C.
 type Id = voidptr

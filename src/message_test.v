@@ -1,4 +1,4 @@
-module runtime
+module objc
 
 fn test_send_message_0_argument() {
 	cls := Class.get('NSMutableArray') or { panic('failed to load class NSMutableArray') }

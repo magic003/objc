@@ -1,4 +1,4 @@
-module runtime
+module objc
 
 // A message builder.
 [noinit]

@@ -1,4 +1,4 @@
-module runtime
+module objc
 
 // A type that represents an Objective-C class.
 [noinit]

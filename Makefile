@@ -4,7 +4,7 @@ fmt:
 	v fmt -w .
 
 build:
-	v -shared runtime
+	v -shared .
 
 test:
 	v -stats test .

@@ -1,4 +1,4 @@
-module runtime
+module objc
 
 // A type that represents a method selector, `SEL`, in Objective-C.
 [noinit]
