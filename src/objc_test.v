@@ -7,3 +7,8 @@ fn test_class() {
 	cls_none := class('NonExistsClass')
 	assert cls_none == none
 }
+
+fn test_sel() {
+	s := sel('init')
+	assert typeof(s.ptr).name == '&C.objc_selector'
+}
