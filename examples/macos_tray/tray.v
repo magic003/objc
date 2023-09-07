@@ -71,6 +71,10 @@ fn (app &TrayApp) build_menu() objc.Id {
 		menu_item := ns_menu_item_cls.message(sel('new')).request[objc.Id]()
 		menu_item.message(sel('setTitle:')).args1(title).notify()
 		menu_item.message(sel('setEnabled:')).args1(objc.yes).notify()
+		if item.id == 'quit' {
+			menu_item.message(sel('setTarget:')).args1(app.app).notify()
+			menu_item.message(sel('setAction:')).args1(sel('terminate:')).notify()
+		}
 
 		menu.message(sel('addItem:')).args1(menu_item).notify()
 	}
