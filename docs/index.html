@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="x-ua-compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>README | vdoc</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap"
+			rel="stylesheet"
+		/>
+		<link
+			href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+		<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+		<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+		<link rel="manifest" href="site.webmanifest" />
+		<link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5" />
+		<meta name="msapplication-TileColor" content="#da532c" />
+		<meta name="theme-color" content="#ffffff" />
+		<link rel="stylesheet" href="doc.css" />
+		<link rel="stylesheet" href="normalize.css" />
+		<script src="dark-mode.js"></script>
+	</head>
+
+	<body>
+		<div><a id="skip-to-content-link" href="#main-content">Skip to content</a></div>
+		<div id="page">
+			<header class="doc-nav hidden">
+				<div class="heading-container">
+					<div class="heading">
+						<div class="info">
+							<div class="module">objc</div>
+							<div class="toggle-version-container">
+								<span>0.0.1 6813a12</span>
+								<div
+									id="dark-mode-toggle"
+									role="switch"
+									aria-checked="false"
+									aria-label="Toggle dark mode"
+								>
+									<svg xmlns="http://www.w3.org/2000/svg" class="light-icon" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" class="dark-icon" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><rect fill="none" height="24" width="24"/></g><g><g><g><path d="M11.1,12.08C8.77,7.57,10.6,3.6,11.63,2.01C6.27,2.2,1.98,6.59,1.98,12c0,0.14,0.02,0.28,0.02,0.42 C2.62,12.15,3.29,12,4,12c1.66,0,3.18,0.83,4.1,2.15C9.77,14.63,11,16.17,11,18c0,1.52-0.87,2.83-2.12,3.51 c0.98,0.32,2.03,0.5,3.11,0.5c3.5,0,6.58-1.8,8.37-4.52C18,17.72,13.38,16.52,11.1,12.08z"/></g><path d="M7,16l-0.18,0C6.4,14.84,5.3,14,4,14c-1.66,0-3,1.34-3,3s1.34,3,3,3c0.62,0,2.49,0,3,0c1.1,0,2-0.9,2-2 C9,16.9,8.1,16,7,16z"/></g></g></svg>
+
+								</div>
+							</div>
+							<svg xmlns="http://www.w3.org/2000/svg" id="toggle-menu" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+
+						</div>
+						<div id="search">
+							<input type="text" placeholder="Search... (beta)" autocomplete="off" />
+						</div>
+					</div>
+				</div>
+				<nav class="search hidden"></nav>
+				<nav class="content hidden">
+					<ul>
+						<li class="open active"><div class="menu-row"><a href="./index.html">README</a></div></li><li class="open"><div class="menu-row"><a href="./objc.html">objc</a></div></li>
+					</ul>
+				</nav>
+			</header>
+			<div class="doc-scrollview" tabindex="-1" id="main-content">
+				<div class="doc-container">
+					<div class="doc-content">
+								<section id="README" class="doc-node">
+			<div class="title"><h1> README</h1></div><p>This vlang package provides Objective-C Runtime bindings for V.</p>
+<h2>Status</h2>
+<p>It is currently working in progress and should be considered experimental. It's only tested on
+x86_64 architecture, macOS Ventura 13.5.</p>
+<p>Supported features:</p>
+<ul>
+<li>Bool type</li>
+<li>Id type</li>
+<li>Load classes</li>
+<li>Create instances</li>
+<li>Register selectors</li>
+<li>Send messages (varargs are not supported)</li>
+</ul>
+<h2>Installation</h2>
+<pre><code class="language-shell">v install magic003.objc
+</code></pre>
+<h2>Usage</h2>
+<h3>Bool type</h3>
+<p>The <code>Bool</code> type is an alias of the V <code>bool</code> type.</p>
+<pre><code class="language-v">assert objc.yes == true
+assert objc.no == false
+</code></pre>
+<h3>Load a class</h3>
+<p>An Objective-C class can be loaded using either a factory function or a static type method.</p>
+<pre><code class="language-v">cls1 := objc.Class.get('NSMutableArray') or { panic('failed to load class NSMutableArray') }
+cls2 := objc.class('NSMutableArray') or { panic('failed to load class NSMutableArray') }
+</code></pre>
+<h3>Register and get a selector</h3>
+<p>An Objective-C selector can be registered using either a factory function or a static type method.</p>
+<pre><code class="language-v">s1 := objc.Sel.get('init')
+s2 := objc.sel('init')
+</code></pre>
+<h3>Send messages</h3>
+<p>Messages can be sent to a class or an instance. There are two types of messages:</p>
+<ul>
+<li><code>request[R]()</code>: a message with return type <code>R</code>.</li>
+<li><code>notify()</code>: a message without a return value.</li>
+</ul>
+<pre><code class="language-v">// a mutable array instance is created via chained messages
+arr := cls1.message(objc.sel('alloc')).request[objc.Id]()
+        .message(objc.sel('init')).request[objc.Id]()
+
+// load the NSObject class and create an instance
+obj_cls := objc.class('NSObject') or { panic('failed to load class NSObject') }
+obj := obj_cls.message(sel('new')).request[objc.Id]()
+
+// add an object to the array. Message with one argument and no return value. 
+// Use `args2()`, `args3()` and etc for more arguments.
+arr.message(sel('addObject:')).args1(obj).notify()
+
+// message without an argument.
+size := arr.message(sel('count')).request[u64]()
+assert size == 1
+</code></pre>
+<h2>Examples</h2>
+<p>The unit tests have basic usages.</p>
+<p>Check out the <code>examples</code> folder for more examples.</p>
+<h2>Documentation</h2>
+<p>Documentation: <a href="http://magic003.github.io/objc">http://magic003.github.io/objc</a></p>
+<h2>References</h2>
+<ul>
+<li><a href="https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC">Programming with Objective-C</a></li>
+<li><a href="https://developer.apple.com/documentation/objectivec?language=objc">Objective-C Runtime APIs</a></li>
+<li><a href="https://github.com/SSheldon/rust-objc">rust-objc</a>: Objective-C bindings for Rust.</li>
+</ul>
+
+</section>
+
+
+						<div class="footer">Powered by vdoc. Generated on: 8 Sep 2023 09:20:51</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+		<script src="doc.js"></script>
+		<script async src="search_index.js"></script>
+	</body>
+</html>

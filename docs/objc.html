@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="x-ua-compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>objc | vdoc</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap"
+			rel="stylesheet"
+		/>
+		<link
+			href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+		<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+		<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+		<link rel="manifest" href="site.webmanifest" />
+		<link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5" />
+		<meta name="msapplication-TileColor" content="#da532c" />
+		<meta name="theme-color" content="#ffffff" />
+		<link rel="stylesheet" href="doc.css" />
+		<link rel="stylesheet" href="normalize.css" />
+		<script src="dark-mode.js"></script>
+	</head>
+
+	<body>
+		<div><a id="skip-to-content-link" href="#main-content">Skip to content</a></div>
+		<div id="page">
+			<header class="doc-nav hidden">
+				<div class="heading-container">
+					<div class="heading">
+						<div class="info">
+							<div class="module">objc</div>
+							<div class="toggle-version-container">
+								<span>0.0.1 6813a12</span>
+								<div
+									id="dark-mode-toggle"
+									role="switch"
+									aria-checked="false"
+									aria-label="Toggle dark mode"
+								>
+									<svg xmlns="http://www.w3.org/2000/svg" class="light-icon" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" class="dark-icon" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><rect fill="none" height="24" width="24"/></g><g><g><g><path d="M11.1,12.08C8.77,7.57,10.6,3.6,11.63,2.01C6.27,2.2,1.98,6.59,1.98,12c0,0.14,0.02,0.28,0.02,0.42 C2.62,12.15,3.29,12,4,12c1.66,0,3.18,0.83,4.1,2.15C9.77,14.63,11,16.17,11,18c0,1.52-0.87,2.83-2.12,3.51 c0.98,0.32,2.03,0.5,3.11,0.5c3.5,0,6.58-1.8,8.37-4.52C18,17.72,13.38,16.52,11.1,12.08z"/></g><path d="M7,16l-0.18,0C6.4,14.84,5.3,14,4,14c-1.66,0-3,1.34-3,3s1.34,3,3,3c0.62,0,2.49,0,3,0c1.1,0,2-0.9,2-2 C9,16.9,8.1,16,7,16z"/></g></g></svg>
+
+								</div>
+							</div>
+							<svg xmlns="http://www.w3.org/2000/svg" id="toggle-menu" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+
+						</div>
+						<div id="search">
+							<input type="text" placeholder="Search... (beta)" autocomplete="off" />
+						</div>
+					</div>
+				</div>
+				<nav class="search hidden"></nav>
+				<nav class="content hidden">
+					<ul>
+						<li class="open"><div class="menu-row"><a href="./index.html">README</a></div></li><li class="open active"><div class="menu-row"><a href="./objc.html">objc</a></div></li>
+					</ul>
+				</nav>
+			</header>
+			<div class="doc-scrollview" tabindex="-1" id="main-content">
+				<div class="doc-container">
+					<div class="doc-content">
+								<section id="readme_objc" class="doc-node">
+			<div class="title"><h1> objc <a href="#readme_objc">#</a></h1></div><p>This vlang package provides Objective-C Runtime bindings for V.</p>
+<h2>Status</h2>
+<p>It is currently working in progress and should be considered experimental. It's only tested on
+x86_64 architecture, macOS Ventura 13.5.</p>
+<p>Supported features:</p>
+<ul>
+<li>Bool type</li>
+<li>Id type</li>
+<li>Load classes</li>
+<li>Create instances</li>
+<li>Register selectors</li>
+<li>Send messages (varargs are not supported)</li>
+</ul>
+<h2>Installation</h2>
+<pre><code class="language-shell">v install magic003.objc
+</code></pre>
+<h2>Usage</h2>
+<h3>Bool type</h3>
+<p>The <code>Bool</code> type is an alias of the V <code>bool</code> type.</p>
+<pre><code class="language-v">assert objc.yes == true
+assert objc.no == false
+</code></pre>
+<h3>Load a class</h3>
+<p>An Objective-C class can be loaded using either a factory function or a static type method.</p>
+<pre><code class="language-v">cls1 := objc.Class.get('NSMutableArray') or { panic('failed to load class NSMutableArray') }
+cls2 := objc.class('NSMutableArray') or { panic('failed to load class NSMutableArray') }
+</code></pre>
+<h3>Register and get a selector</h3>
+<p>An Objective-C selector can be registered using either a factory function or a static type method.</p>
+<pre><code class="language-v">s1 := objc.Sel.get('init')
+s2 := objc.sel('init')
+</code></pre>
+<h3>Send messages</h3>
+<p>Messages can be sent to a class or an instance. There are two types of messages:</p>
+<ul>
+<li><code>request[R]()</code>: a message with return type <code>R</code>.</li>
+<li><code>notify()</code>: a message without a return value.</li>
+</ul>
+<pre><code class="language-v">// a mutable array instance is created via chained messages
+arr := cls1.message(objc.sel('alloc')).request[objc.Id]()
+        .message(objc.sel('init')).request[objc.Id]()
+
+// load the NSObject class and create an instance
+obj_cls := objc.class('NSObject') or { panic('failed to load class NSObject') }
+obj := obj_cls.message(sel('new')).request[objc.Id]()
+
+// add an object to the array. Message with one argument and no return value. 
+// Use `args2()`, `args3()` and etc for more arguments.
+arr.message(sel('addObject:')).args1(obj).notify()
+
+// message without an argument.
+size := arr.message(sel('count')).request[u64]()
+assert size == 1
+</code></pre>
+<h2>Examples</h2>
+<p>The unit tests have basic usages.</p>
+<p>Check out the <code>examples</code> folder for more examples.</p>
+<h2>Documentation</h2>
+<p>Documentation: <a href="http://magic003.github.io/objc">http://magic003.github.io/objc</a></p>
+<h2>References</h2>
+<ul>
+<li><a href="https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC">Programming with Objective-C</a></li>
+<li><a href="https://developer.apple.com/documentation/objectivec?language=objc">Objective-C Runtime APIs</a></li>
+<li><a href="https://github.com/SSheldon/rust-objc">rust-objc</a>: Objective-C bindings for Rust.</li>
+</ul>
+
+</section>
+
+		<section id="Constants" class="doc-node const">
+			<div class="title"><h2>Constants <a href="#Constants">#</a></h2></div>
+
+</section>
+		<section id="" class="doc-node const">
+<pre class="signature"><code><span class="token keyword">const</span> yes <span class="token operator">=</span> <span class="token function">Bool</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span></code></pre>
+<p>yes as true.</p>
+
+</section>
+		<section id="" class="doc-node const">
+<pre class="signature"><code><span class="token keyword">const</span> no <span class="token operator">=</span> <span class="token function">Bool</span><span class="token punctuation">(</span><span class="token boolean">false</span><span class="token punctuation">)</span></code></pre>
+<p>no as false.</p>
+
+</section>
+		<section id="sel" class="doc-node">
+			<div class="title"><h2>fn sel <a href="#sel">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">sel</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">)</span> Sel</code></pre>
+<p>sel registers a method with the Objective-C runtime system, maps the method name to a
+selector, and returns the selector value.</p>
+
+<section class="doc-node examples"><h4>Example</h4>
+<pre><code class="language-v">sel1 <span class="token operator">:=</span> <span class="token function">sel</span><span class="token punctuation">(</span><span class="token string">'new'</span><span class="token punctuation">)</span>
+sel2 <span class="token operator">:=</span> <span class="token function">sel</span><span class="token punctuation">(</span><span class="token string">'allocWithZone:'</span><span class="token punctuation">)</span></code></pre>
+</section>
+</section>
+		<section id="class" class="doc-node">
+			<div class="title"><h2>fn class <a href="#class">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">class</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">?</span>Class</code></pre>
+<p>class returns the class definition of a specified class. It returns <code>none</code> if
+the class is not registered with the Objective-C runtime.</p>
+
+<section class="doc-node examples"><h4>Example</h4>
+<pre><code class="language-v">cls <span class="token operator">:=</span> <span class="token function">class</span><span class="token punctuation">(</span><span class="token string">'NSObject'</span><span class="token punctuation">)</span> <span class="token keyword">or</span> <span class="token punctuation">{</span> <span class="token function">panic</span><span class="token punctuation">(</span><span class="token string">'failed to load class NSObject'</span><span class="token punctuation">)</span> <span class="token punctuation">}</span></code></pre>
+</section>
+</section>
+		<section id="Msg2[A,-B].request" class="doc-node">
+			<div class="title"><h2>fn (Msg2[A, B]) request <a href="#Msg2[A,-B].request">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg2<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">]</span><span class="token punctuation">)</span> request<span class="token punctuation">[</span><span class="token builtin">R</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">R</span></code></pre>
+<p>request sends a message requesting for a value of type <code>R</code>.</p>
+
+</section>
+		<section id="Msg2[A,-B].notify" class="doc-node">
+			<div class="title"><h2>fn (Msg2[A, B]) notify <a href="#Msg2[A,-B].notify">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg2<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token function">notify</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p>notify sends a message without a return value.</p>
+
+</section>
+		<section id="Msg3[A,-B,-D].request" class="doc-node">
+			<div class="title"><h2>fn (Msg3[A, B, D]) request <a href="#Msg3[A,-B,-D].request">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg3<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">,</span> <span class="token builtin">D</span><span class="token punctuation">]</span><span class="token punctuation">)</span> request<span class="token punctuation">[</span><span class="token builtin">R</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">R</span></code></pre>
+<p>request sends a message requesting for a value of type <code>R</code>.</p>
+
+</section>
+		<section id="Msg3[A,-B,-D].notify" class="doc-node">
+			<div class="title"><h2>fn (Msg3[A, B, D]) notify <a href="#Msg3[A,-B,-D].notify">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg3<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">,</span> <span class="token builtin">D</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token function">notify</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p>notify sends a message without a return value.</p>
+
+</section>
+		<section id="Msg4[A,-B,-D,-E].request" class="doc-node">
+			<div class="title"><h2>fn (Msg4[A, B, D, E]) request <a href="#Msg4[A,-B,-D,-E].request">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg4<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">,</span> <span class="token builtin">D</span><span class="token punctuation">,</span> <span class="token builtin">E</span><span class="token punctuation">]</span><span class="token punctuation">)</span> request<span class="token punctuation">[</span><span class="token builtin">R</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">R</span></code></pre>
+<p>request sends a message requesting for a value of type <code>R</code>.</p>
+
+</section>
+		<section id="Msg4[A,-B,-D,-E].notify" class="doc-node">
+			<div class="title"><h2>fn (Msg4[A, B, D, E]) notify <a href="#Msg4[A,-B,-D,-E].notify">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg4<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">,</span> <span class="token builtin">D</span><span class="token punctuation">,</span> <span class="token builtin">E</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token function">notify</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p>notify sends a message without a return value.</p>
+
+</section>
+		<section id="MsgBuilder.args1" class="doc-node">
+			<div class="title"><h2>fn (MsgBuilder) args1 <a href="#MsgBuilder.args1">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m MsgBuilder<span class="token punctuation">)</span> args1<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">]</span><span class="token punctuation">(</span>a <span class="token builtin">A</span><span class="token punctuation">)</span> Msg1<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">]</span></code></pre>
+<p>args1 adds 1 argument to the message.</p>
+
+</section>
+		<section id="MsgBuilder.args2" class="doc-node">
+			<div class="title"><h2>fn (MsgBuilder) args2 <a href="#MsgBuilder.args2">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m MsgBuilder<span class="token punctuation">)</span> args2<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">]</span><span class="token punctuation">(</span>a <span class="token builtin">A</span><span class="token punctuation">,</span> b <span class="token builtin">B</span><span class="token punctuation">)</span> Msg2<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">]</span></code></pre>
+<p>args2 adds 2 arguments to the message.</p>
+
+</section>
+		<section id="MsgBuilder.args3" class="doc-node">
+			<div class="title"><h2>fn (MsgBuilder) args3 <a href="#MsgBuilder.args3">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m MsgBuilder<span class="token punctuation">)</span> args3<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">,</span> <span class="token builtin">D</span><span class="token punctuation">]</span><span class="token punctuation">(</span>a <span class="token builtin">A</span><span class="token punctuation">,</span> b <span class="token builtin">B</span><span class="token punctuation">,</span> d <span class="token builtin">D</span><span class="token punctuation">)</span> Msg3<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">,</span> <span class="token builtin">D</span><span class="token punctuation">]</span></code></pre>
+<p>args3 adds 3 arguments to the message.</p>
+
+</section>
+		<section id="MsgBuilder.args4" class="doc-node">
+			<div class="title"><h2>fn (MsgBuilder) args4 <a href="#MsgBuilder.args4">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m MsgBuilder<span class="token punctuation">)</span> args4<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">,</span> <span class="token builtin">D</span><span class="token punctuation">,</span> <span class="token builtin">E</span><span class="token punctuation">]</span><span class="token punctuation">(</span>a <span class="token builtin">A</span><span class="token punctuation">,</span> b <span class="token builtin">B</span><span class="token punctuation">,</span> d <span class="token builtin">D</span><span class="token punctuation">,</span> e <span class="token builtin">E</span><span class="token punctuation">)</span> Msg4<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">,</span> <span class="token builtin">D</span><span class="token punctuation">,</span> <span class="token builtin">E</span><span class="token punctuation">]</span></code></pre>
+<p>args4 adds 4 arguments to the message.</p>
+
+</section>
+		<section id="MsgBuilder.request" class="doc-node">
+			<div class="title"><h2>fn (MsgBuilder) request <a href="#MsgBuilder.request">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m MsgBuilder<span class="token punctuation">)</span> request<span class="token punctuation">[</span><span class="token builtin">R</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">R</span></code></pre>
+<p>request sends a message requesting a value of type <code>R</code>.</p>
+
+</section>
+		<section id="MsgBuilder.notify" class="doc-node">
+			<div class="title"><h2>fn (MsgBuilder) notify <a href="#MsgBuilder.notify">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m MsgBuilder<span class="token punctuation">)</span> <span class="token function">notify</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p>notify sends a message without a return value.</p>
+
+</section>
+		<section id="Bool" class="doc-node">
+			<div class="title"><h2>type Bool <a href="#Bool">#</a></h2></div><pre class="signature"><code><span class="token keyword">type</span> Bool <span class="token operator">=</span> <span class="token builtin">bool</span></code></pre>
+<p>A type that represents a Boolean value in Objective-C.</p>
+
+</section>
+		<section id="Id.message" class="doc-node">
+			<div class="title"><h2>fn (Id) message <a href="#Id.message">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>id Id<span class="token punctuation">)</span> <span class="token function">message</span><span class="token punctuation">(</span>op Sel<span class="token punctuation">)</span> MsgBuilder</code></pre>
+<p>message creates a message with the <code>id</code> as the receiver and <code>op</code> as the method selector.</p>
+
+</section>
+		<section id="Msg1[A].request" class="doc-node">
+			<div class="title"><h2>fn (Msg1[A]) request <a href="#Msg1[A].request">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg1<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">]</span><span class="token punctuation">)</span> request<span class="token punctuation">[</span><span class="token builtin">R</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">R</span></code></pre>
+<p>request sends a message requesting for a value of type <code>R</code>.</p>
+
+</section>
+		<section id="Msg1[A].notify" class="doc-node">
+			<div class="title"><h2>fn (Msg1[A]) notify <a href="#Msg1[A].notify">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg1<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token function">notify</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p>notify sends a message without a return value.</p>
+
+</section>
+		<section id="Class" class="doc-node">
+			<div class="title"><h2>struct Class <a href="#Class">#</a></h2></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Class</span> <span class="token punctuation">{</span>
+	ptr <span class="token operator">&</span>C<span class="token punctuation">.</span>objc_object <span class="token punctuation">[</span>required<span class="token punctuation">]</span> <span class="token comment">// the Objective-C Class object</span>
+<span class="token punctuation">}</span></code></pre>
+<p>A type that represents an Objective-C class.</p>
+
+</section>
+		<section id="Class.Class__static__get" class="doc-node">
+			<div class="title"><h2>fn (Class) Class__static__get <a href="#Class.Class__static__get">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> Class<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">?</span>Class</code></pre>
+<p>Class.get returns the class definition of a specified class. It returns <code>none</code> if
+the class is not registered with the Objective-C runtime.</p>
+
+</section>
+		<section id="Class.message" class="doc-node">
+			<div class="title"><h2>fn (Class) message <a href="#Class.message">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>c Class<span class="token punctuation">)</span> <span class="token function">message</span><span class="token punctuation">(</span>op Sel<span class="token punctuation">)</span> MsgBuilder</code></pre>
+<p>message creates a message with the class instance as the receiver and <code>op</code> as the method selector.</p>
+
+</section>
+		<section id="Sel" class="doc-node">
+			<div class="title"><h2>struct Sel <a href="#Sel">#</a></h2></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Sel</span> <span class="token punctuation">{</span>
+	ptr <span class="token operator">&</span>C<span class="token punctuation">.</span>objc_selector <span class="token punctuation">[</span>required<span class="token punctuation">]</span>
+<span class="token punctuation">}</span></code></pre>
+<p>A type that represents a method selector, <code>SEL</code>, in Objective-C.</p>
+
+</section>
+		<section id="Sel.Sel__static__get" class="doc-node">
+			<div class="title"><h2>fn (Sel) Sel__static__get <a href="#Sel.Sel__static__get">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> Sel<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">)</span> Sel</code></pre>
+<p>Sel.get registers a method with the Objective-C runtime system, maps the method name to a
+selector, and returns the selector value.</p>
+
+<section class="doc-node examples"><h4>Example</h4>
+<pre><code class="language-v">sel1 <span class="token operator">:=</span> Sel<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'new'</span><span class="token punctuation">)</span>
+sel2 <span class="token operator">:=</span> Sel<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'allocWithZone:'</span><span class="token punctuation">)</span></code></pre>
+</section>
+</section>
+
+						<div class="footer">Powered by vdoc. Generated on: 8 Sep 2023 09:20:51</div>
+					</div>
+					<div class="doc-toc"><ul><li class="open"><a href="#readme_objc">README</a></li>
+<li class="open"><a href="#Constants">Constants</a></li>
+<li class="open"><a href="#sel">fn sel</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#class">fn class</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Msg2[A,-B].request">type Msg2[A, B]</a>        <ul>
+<li><a href="#Msg2[A,-B].request">fn request</a></li>
+<li><a href="#Msg2[A,-B].notify">fn notify</a></li>
+</ul>
+</li>
+<li class="open"><a href="#Msg3[A,-B,-D].request">type Msg3[A, B, D]</a>        <ul>
+<li><a href="#Msg3[A,-B,-D].request">fn request</a></li>
+<li><a href="#Msg3[A,-B,-D].notify">fn notify</a></li>
+</ul>
+</li>
+<li class="open"><a href="#Msg4[A,-B,-D,-E].request">type Msg4[A, B, D, E]</a>        <ul>
+<li><a href="#Msg4[A,-B,-D,-E].request">fn request</a></li>
+<li><a href="#Msg4[A,-B,-D,-E].notify">fn notify</a></li>
+</ul>
+</li>
+<li class="open"><a href="#MsgBuilder.args1">type MsgBuilder</a>        <ul>
+<li><a href="#MsgBuilder.args1">fn args1</a></li>
+<li><a href="#MsgBuilder.args2">fn args2</a></li>
+<li><a href="#MsgBuilder.args3">fn args3</a></li>
+<li><a href="#MsgBuilder.args4">fn args4</a></li>
+<li><a href="#MsgBuilder.request">fn request</a></li>
+<li><a href="#MsgBuilder.notify">fn notify</a></li>
+</ul>
+</li>
+<li class="open"><a href="#Bool">type Bool</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Id.message">type Id</a>        <ul>
+<li><a href="#Id.message">fn message</a></li>
+</ul>
+</li>
+<li class="open"><a href="#Msg1[A].request">type Msg1[A]</a>        <ul>
+<li><a href="#Msg1[A].request">fn request</a></li>
+<li><a href="#Msg1[A].notify">fn notify</a></li>
+</ul>
+</li>
+<li class="open"><a href="#Class">struct Class</a>        <ul>
+<li><a href="#Class.Class__static__get">fn Class__static__get</a></li>
+<li><a href="#Class.message">fn message</a></li>
+</ul>
+</li>
+<li class="open"><a href="#Sel">struct Sel</a>        <ul>
+<li><a href="#Sel.Sel__static__get">fn Sel__static__get</a></li>
+</ul>
+</li>
+</ul></div>
+				</div>
+			</div>
+		</div>
+		<script src="doc.js"></script>
+		<script async src="search_index.js"></script>
+	</body>
+</html>
