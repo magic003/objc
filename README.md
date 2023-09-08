@@ -1,4 +1,3 @@
-# objc
 This vlang package provides Objective-C Runtime bindings for V.
 
 ## Status

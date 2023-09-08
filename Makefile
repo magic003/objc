@@ -8,3 +8,6 @@ build:
 
 test:
 	v -stats test .
+
+vdoc:
+	v doc -readme -f html -m . -o /tmp/
