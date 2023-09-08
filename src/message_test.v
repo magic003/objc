@@ -23,12 +23,26 @@ struct C.CGRect {
 
 type CGRect = C.CGRect
 
+const obj_cls = Class.get('NSObject') or { panic('failed to load class NSObject') }
+
+const str_cls = Class.get('NSString') or { panic('failed to load class NSString') }
+
+const set_cls = Class.get('NSSet') or { panic('failed to load class NSSet') }
+
+const mutable_arr_cls = Class.get('NSMutableArray') or {
+	panic('failed to load class NSMutableArray')
+}
+
+const mutable_dict_cls = Class.get('NSMutableDictionary') or {
+	panic('failed to load class NSMutableDictionary')
+}
+
+const ns_view_cls = Class.get('NSView') or { panic('failed to load class NSView') }
+
 fn test_send_message_0_argument() {
-	cls := Class.get('NSMutableArray') or { panic('failed to load class NSMutableArray') }
-	arr := cls.message(Sel.get('alloc')).request[Id]()
+	arr := objc.mutable_arr_cls.message(Sel.get('alloc')).request[Id]()
 		.message(Sel.get('init')).request[Id]()
-	obj_cls := Class.get('NSObject') or { panic('failed to load class NSObject') }
-	obj := obj_cls.message(Sel.get('new')).request[Id]()
+	obj := objc.obj_cls.message(Sel.get('new')).request[Id]()
 	arr.message(Sel.get('addObject:')).args1(obj).notify()
 	mut size := arr.message(Sel.get('count')).request[u64]()
 	assert size == 1
@@ -39,11 +53,9 @@ fn test_send_message_0_argument() {
 }
 
 fn test_send_message_1_argument() {
-	obj_cls := Class.get('NSObject') or { panic('failed to load class NSObject') }
-	obj := obj_cls.message(Sel.get('new')).request[Id]()
+	obj := objc.obj_cls.message(Sel.get('new')).request[Id]()
 
-	cls := Class.get('NSSet') or { panic('failed to load class NSSet') }
-	s := cls.message(Sel.get('setWithObject:')).args1[voidptr](obj).request[Id]()
+	s := objc.set_cls.message(Sel.get('setWithObject:')).args1[voidptr](obj).request[Id]()
 	size := s.message(Sel.get('count')).request[u64]()
 	assert size == 1
 
@@ -52,22 +64,19 @@ fn test_send_message_1_argument() {
 }
 
 fn test_send_message_2_arguments() {
-	str_cls := Class.get('NSString') or { panic('failed to load class NSString') }
+	dict := objc.mutable_dict_cls.message(Sel.get('dictionaryWithCapacity:')).args1(u64(5)).request[Id]()
 
-	cls := Class.get('NSMutableDictionary') or { panic('failed to load class NSMutableDictionary') }
-	dict := cls.message(Sel.get('dictionaryWithCapacity:')).args1(u64(5)).request[Id]()
-
-	k1 := str_cls.message(Sel.get('alloc')).request[Id]()
+	k1 := objc.str_cls.message(Sel.get('alloc')).request[Id]()
 		.message(Sel.get('initWithCString:encoding:')).args2(c'k1', u64(1)).request[Id]()
-	v1 := str_cls.message(Sel.get('alloc')).request[Id]()
+	v1 := objc.str_cls.message(Sel.get('alloc')).request[Id]()
 		.message(Sel.get('initWithCString:encoding:')).args2(c'v1', u64(1)).request[Id]()
 	dict.message(Sel.get('setValue:forKey:')).args2(v1, k1).notify()
 	mut size := dict.message(Sel.get('count')).request[u64]()
 	assert size == 1
 
-	k2 := str_cls.message(Sel.get('alloc')).request[Id]()
+	k2 := objc.str_cls.message(Sel.get('alloc')).request[Id]()
 		.message(Sel.get('initWithCString:encoding:')).args2(c'k2', u64(1)).request[Id]()
-	v2 := str_cls.message(Sel.get('alloc')).request[Id]()
+	v2 := objc.str_cls.message(Sel.get('alloc')).request[Id]()
 		.message(Sel.get('initWithCString:encoding:')).args2(c'v2', u64(1)).request[Id]()
 	dict.message(Sel.get('setValue:forKey:')).args2(v2, k2).notify()
 	size = dict.message(Sel.get('count')).request[u64]()
@@ -81,10 +90,8 @@ fn test_send_message_2_arguments() {
 }
 
 fn test_send_message_3_arguments() {
-	str_cls := Class.get('NSString') or { panic('failed to load class NSString') }
-
 	vstr := 'hello world'
-	str := str_cls.message(Sel.get('alloc')).request[Id]()
+	str := objc.str_cls.message(Sel.get('alloc')).request[Id]()
 		.message(Sel.get('initWithBytes:length:encoding:'))
 		.args3(vstr.str, vstr.len, u64(1)).request[Id]()
 
@@ -95,10 +102,8 @@ fn test_send_message_3_arguments() {
 }
 
 fn test_send_message_4_arguments() {
-	str_cls := Class.get('NSString') or { panic('failed to load class NSString') }
-
 	vstr := 'foo bar'
-	str := str_cls.message(Sel.get('alloc')).request[Id]()
+	str := objc.str_cls.message(Sel.get('alloc')).request[Id]()
 		.message(Sel.get('initWithBytesNoCopy:length:encoding:freeWhenDone:'))
 		.args4(vstr.str, vstr.len, u64(1), no).request[Id]()
 
@@ -109,7 +114,6 @@ fn test_send_message_4_arguments() {
 }
 
 fn test_send_message_ns_view() {
-	cls := Class.get('NSView') or { panic('failed to load class NSView') }
 	rect := CGRect{
 		origin: C.CGPoint{
 			x: 10.0
@@ -120,7 +124,7 @@ fn test_send_message_ns_view() {
 			width: 400.0
 		}
 	}
-	mut obj := cls.message(Sel.get('alloc')).request[Id]()
+	mut obj := objc.ns_view_cls.message(Sel.get('alloc')).request[Id]()
 	obj = obj.message(Sel.get('initWithFrame:')).args1(rect).request[Id]()
 
 	obj.message(Sel.get('setFrameRotation:')).args1(f64(20)).notify()
