@@ -74,7 +74,7 @@ Check out the `examples` folder for more examples.
 
 ## Documentation
 
-Documentation: (add link)
+Documentation: http://magic003.github.io/objc
 
 ## References
 
