@@ -80,6 +80,34 @@ fn test_send_message_2_arguments() {
 	}
 }
 
+fn test_send_message_3_arguments() {
+	str_cls := Class.get('NSString') or { panic('failed to load class NSString') }
+
+	vstr := 'hello world'
+	str := str_cls.message(Sel.get('alloc')).request[Id]()
+		.message(Sel.get('initWithBytes:length:encoding:'))
+		.args3(vstr.str, vstr.len, u64(1)).request[Id]()
+
+	cstr := str.message(Sel.get('cStringUsingEncoding:')).args1(u64(1)).request[&char]()
+	unsafe {
+		assert cstr.vstring() == vstr
+	}
+}
+
+fn test_send_message_4_arguments() {
+	str_cls := Class.get('NSString') or { panic('failed to load class NSString') }
+
+	vstr := 'foo bar'
+	str := str_cls.message(Sel.get('alloc')).request[Id]()
+		.message(Sel.get('initWithBytesNoCopy:length:encoding:freeWhenDone:'))
+		.args4(vstr.str, vstr.len, u64(1), no).request[Id]()
+
+	cstr := str.message(Sel.get('cStringUsingEncoding:')).args1(u64(1)).request[&char]()
+	unsafe {
+		assert cstr.vstring() == vstr
+	}
+}
+
 fn test_send_message_ns_view() {
 	cls := Class.get('NSView') or { panic('failed to load class NSView') }
 	rect := CGRect{
