@@ -2,8 +2,8 @@
 This vlang package provides Objective-C Runtime bindings for V.
 
 ## Status
-It is currently working in progress and should be considered as experimental. It's only tested on 
-macOS Ventura 13.5, x86\_64.
+It is currently working in progress and should be considered experimental. It's only tested on 
+x86\_64 architecture, macOS Ventura 13.5.
 
 Supported features:
 * Bool type
@@ -58,11 +58,11 @@ arr := cls1.message(objc.sel('alloc')).request[objc.Id]()
 obj_cls := objc.class('NSObject') or { panic('failed to load class NSObject') }
 obj := obj_cls.message(sel('new')).request[objc.Id]()
 
-// add an object to the array. Message with one argument and no return value. Use `args2()`, `args3()` and etc
-// for more arguments
+// add an object to the array. Message with one argument and no return value. 
+// Use `args2()`, `args3()` and etc for more arguments.
 arr.message(sel('addObject:')).args1(obj).notify()
 
-// message without an argument
+// message without an argument.
 size := arr.message(sel('count')).request[u64]()
 assert size == 1
 ```
@@ -71,7 +71,7 @@ assert size == 1
 
 The unit tests have basic usages.
 
-Check out the `examples` folder for more complicated examples. 
+Check out the `examples` folder for more examples. 
 
 ## Documentation
 
