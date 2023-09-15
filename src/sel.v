@@ -3,7 +3,7 @@ module objc
 // A type that represents a method selector, `SEL`, in Objective-C.
 [noinit]
 pub struct Sel {
-	ptr &C.objc_selector [required]
+	ptr voidptr [required]
 }
 
 // Sel.get registers a method with the Objective-C runtime system, maps the method name to a

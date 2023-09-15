@@ -3,8 +3,8 @@ module objc
 // A message builder.
 [noinit]
 struct MsgBuilder {
-	id &C.objc_object   [required]
-	op &C.objc_selector [required]
+	id Id  [required]
+	op Sel [required]
 }
 
 // args1 adds 1 argument to the message.
@@ -40,9 +40,9 @@ pub fn (m MsgBuilder) notify() {
 // A type that represents a message having 1 argument.
 [noinit]
 struct Msg1[A] {
-	id &C.objc_object   [required]
-	op &C.objc_selector [required]
-	a  A                [required]
+	id Id  [required]
+	op Sel [required]
+	a  A   [required]
 }
 
 // request sends a message requesting for a value of type `R`.
@@ -58,10 +58,10 @@ pub fn (m Msg1[A]) notify() {
 // A type that represents a message having 2 arguments.
 [noinit]
 struct Msg2[A, B] {
-	id &C.objc_object   [required]
-	op &C.objc_selector [required]
-	a  A                [required]
-	b  B                [required]
+	id Id  [required]
+	op Sel [required]
+	a  A   [required]
+	b  B   [required]
 }
 
 // request sends a message requesting for a value of type `R`.
@@ -77,11 +77,11 @@ pub fn (m Msg2[A, B]) notify() {
 // A type that represents a message having 3 arguments.
 [noinit]
 struct Msg3[A, B, D] {
-	id &C.objc_object   [required]
-	op &C.objc_selector [required]
-	a  A                [required]
-	b  B                [required]
-	d  D                [required]
+	id Id  [required]
+	op Sel [required]
+	a  A   [required]
+	b  B   [required]
+	d  D   [required]
 }
 
 // request sends a message requesting for a value of type `R`.
@@ -97,12 +97,12 @@ pub fn (m Msg3[A, B, D]) notify() {
 // A type that represents a message having 4 arguments.
 [noinit]
 struct Msg4[A, B, D, E] {
-	id &C.objc_object   [required]
-	op &C.objc_selector [required]
-	a  A                [required]
-	b  B                [required]
-	d  D                [required]
-	e  E                [required]
+	id Id  [required]
+	op Sel [required]
+	a  A   [required]
+	b  B   [required]
+	d  D   [required]
+	e  E   [required]
 }
 
 // request sends a message requesting for a value of type `R`.
@@ -119,53 +119,53 @@ pub fn (m Msg4[A, B, D, E]) notify() {
 type FnSendMsgGeneric = fn ()
 
 // Cast objc_msgSend* functions to this function for 0 argument and return type `R`.
-type FnSendMsg0[R] = fn (&C.objc_object, &C.objc_selector) R
+type FnSendMsg0[R] = fn (voidptr, voidptr) R
 
 // Cast objc_msgSend* functions to this function for 1 argument and return type `R`.
-type FnSendMsg1[R, A] = fn (&C.objc_object, &C.objc_selector, A) R
+type FnSendMsg1[R, A] = fn (voidptr, voidptr, A) R
 
 // Cast objc_msgSend* functions to this function for 2 arguments and return type `R`.
-type FnSendMsg2[R, A, B] = fn (&C.objc_object, &C.objc_selector, A, B) R
+type FnSendMsg2[R, A, B] = fn (voidptr, voidptr, A, B) R
 
 // Cast objc_msgSend* functions to this function for 3 arguments and return type `R`.
-type FnSendMsg3[R, A, B, D] = fn (&C.objc_object, &C.objc_selector, A, B, D) R
+type FnSendMsg3[R, A, B, D] = fn (voidptr, voidptr, A, B, D) R
 
 // Cast objc_msgSend* functions to this function for 4 arguments and return type `R`.
-type FnSendMsg4[R, A, B, D, E] = fn (&C.objc_object, &C.objc_selector, A, B, D, E) R
+type FnSendMsg4[R, A, B, D, E] = fn (voidptr, voidptr, A, B, D, E) R
 
 // send_msg_0 calls objc_msgSend* function for 0 argument and return type `R`.
-fn send_msg_0[R](id &C.objc_object, op &C.objc_selector) R {
+fn send_msg_0[R](id Id, op Sel) R {
 	msg_send_fn := get_msg_send_fn[R]()
 	casted_fn := unsafe { FnSendMsg0[R](msg_send_fn) }
-	return casted_fn[R](id, op)
+	return casted_fn[R](id, op.ptr)
 }
 
 // send_msg_1 calls objc_msgSend* function for 1 argument and return type `R`.
-fn send_msg_1[R, A](id &C.objc_object, op &C.objc_selector, a A) R {
+fn send_msg_1[R, A](id Id, op Sel, a A) R {
 	msg_send_fn := get_msg_send_fn[R]()
 	casted_fn := unsafe { FnSendMsg1[R, A](msg_send_fn) }
-	return casted_fn[R, A](id, op, a)
+	return casted_fn[R, A](id, op.ptr, a)
 }
 
 // send_msg_2 calls objc_msgSend* function for 2 arguments and return type `R`.
-fn send_msg_2[R, A, B](id &C.objc_object, op &C.objc_selector, a A, b B) R {
+fn send_msg_2[R, A, B](id Id, op Sel, a A, b B) R {
 	msg_send_fn := get_msg_send_fn[R]()
 	casted_fn := unsafe { FnSendMsg2[R, A, B](msg_send_fn) }
-	return casted_fn[R, A, B](id, op, a, b)
+	return casted_fn[R, A, B](id, op.ptr, a, b)
 }
 
 // send_msg_3 calls objc_msgSend* function for 3 arguments and return type `R`.
-fn send_msg_3[R, A, B, D](id &C.objc_object, op &C.objc_selector, a A, b B, d D) R {
+fn send_msg_3[R, A, B, D](id Id, op Sel, a A, b B, d D) R {
 	msg_send_fn := get_msg_send_fn[R]()
 	casted_fn := unsafe { FnSendMsg3[R, A, B, D](msg_send_fn) }
-	return casted_fn[R, A, B, D](id, op, a, b, d)
+	return casted_fn[R, A, B, D](id, op.ptr, a, b, d)
 }
 
 // send_msg_4 calls objc_msgSend* function for 4 arguments and return type `R`.
-fn send_msg_4[R, A, B, D, E](id &C.objc_object, op &C.objc_selector, a A, b B, d D, e E) R {
+fn send_msg_4[R, A, B, D, E](id Id, op Sel, a A, b B, d D, e E) R {
 	msg_send_fn := get_msg_send_fn[R]()
 	casted_fn := unsafe { FnSendMsg4[R, A, B, D, E](msg_send_fn) }
-	return casted_fn[R, A, B, D, E](id, op, a, b, d, e)
+	return casted_fn[R, A, B, D, E](id, op.ptr, a, b, d, e)
 }
 
 // get_msg_send_fn determines which objc_msgSend* function to call based on `R`.

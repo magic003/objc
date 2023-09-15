@@ -10,5 +10,7 @@ fn test_class() {
 
 fn test_sel() {
 	s := sel('init')
-	assert typeof(s.ptr).name == '&C.objc_selector'
+	unsafe {
+		assert s.ptr != nil
+	}
 }
