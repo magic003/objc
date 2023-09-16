@@ -74,7 +74,8 @@ Check out the `examples` folder for more examples.
 
 ## Documentation
 
-Documentation: http://magic003.github.io/objc
+* API Documentation: http://magic003.github.io/objc
+* Why this project: [V and Objective-C interoperability](https://open.substack.com/pub/insideout101/p/v-and-objective-c-interoperability?r=2rxz0s&utm_campaign=post&utm_medium=web)
 
 ## References
 
