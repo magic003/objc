@@ -137,35 +137,35 @@ type FnSendMsg4[R, A, B, D, E] = fn (voidptr, voidptr, A, B, D, E) R
 fn send_msg_0[R](id Id, op Sel) R {
 	msg_send_fn := get_msg_send_fn[R]()
 	casted_fn := unsafe { FnSendMsg0[R](msg_send_fn) }
-	return casted_fn[R](id, op.ptr)
+	return casted_fn[R](id, op)
 }
 
 // send_msg_1 calls objc_msgSend* function for 1 argument and return type `R`.
 fn send_msg_1[R, A](id Id, op Sel, a A) R {
 	msg_send_fn := get_msg_send_fn[R]()
 	casted_fn := unsafe { FnSendMsg1[R, A](msg_send_fn) }
-	return casted_fn[R, A](id, op.ptr, a)
+	return casted_fn[R, A](id, op, a)
 }
 
 // send_msg_2 calls objc_msgSend* function for 2 arguments and return type `R`.
 fn send_msg_2[R, A, B](id Id, op Sel, a A, b B) R {
 	msg_send_fn := get_msg_send_fn[R]()
 	casted_fn := unsafe { FnSendMsg2[R, A, B](msg_send_fn) }
-	return casted_fn[R, A, B](id, op.ptr, a, b)
+	return casted_fn[R, A, B](id, op, a, b)
 }
 
 // send_msg_3 calls objc_msgSend* function for 3 arguments and return type `R`.
 fn send_msg_3[R, A, B, D](id Id, op Sel, a A, b B, d D) R {
 	msg_send_fn := get_msg_send_fn[R]()
 	casted_fn := unsafe { FnSendMsg3[R, A, B, D](msg_send_fn) }
-	return casted_fn[R, A, B, D](id, op.ptr, a, b, d)
+	return casted_fn[R, A, B, D](id, op, a, b, d)
 }
 
 // send_msg_4 calls objc_msgSend* function for 4 arguments and return type `R`.
 fn send_msg_4[R, A, B, D, E](id Id, op Sel, a A, b B, d D, e E) R {
 	msg_send_fn := get_msg_send_fn[R]()
 	casted_fn := unsafe { FnSendMsg4[R, A, B, D, E](msg_send_fn) }
-	return casted_fn[R, A, B, D, E](id, op.ptr, a, b, d, e)
+	return casted_fn[R, A, B, D, E](id, op, a, b, d, e)
 }
 
 // get_msg_send_fn determines which objc_msgSend* function to call based on `R`.
