@@ -83,8 +83,12 @@ fn encode_type(idx int) !Encoding {
 			}
 			return Encoding.@struct(typ.name, fields)
 		}
+		.alias {
+			a := typ.sym.info as reflection.Alias
+			return encode_type(a.parent_idx)
+		}
 		else {
-			return error('unsupported type ${typ.name} for encoding')
+			return error('cannot encode ${typ.sym.kind} type ${typ.name}')
 		}
 	}
 }

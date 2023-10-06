@@ -2,6 +2,9 @@ module encode
 
 import objc
 
+#include <Foundation/Foundation.h>
+#flag -framework Foundation
+
 fn test_encode_integers() {
 	assert 'c' == encode[i8]()!.str()
 	assert 's' == encode[i16]()!.str()
@@ -51,4 +54,35 @@ struct Example {
 
 fn test_encode_struct() {
 	assert '{Example=@*i}' == encode[Example]()!.str()
+}
+
+type AnotherExample = Example
+
+type NSRect = C.NSRect
+
+type CGFloat = f64
+
+struct C.CGPoint {
+	x CGFloat [required]
+	y CGFloat [required]
+}
+
+type CGPoint = C.CGPoint
+
+struct C.CGSize {
+	height CGFloat [required]
+	width  CGFloat [required]
+}
+
+type CGSize = C.CGSize
+
+[typedef]
+struct C.NSRect {
+	origin CGPoint [required]
+	size   CGSize  [required]
+}
+
+fn test_encode_alias() {
+	assert '{Example=@*i}' == encode[AnotherExample]()!.str()
+	assert '{NSRect={CGPoint=dd}{CGSize=dd}}' == encode[NSRect]()!.str()
 }
