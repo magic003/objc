@@ -86,3 +86,13 @@ fn test_encode_alias() {
 	assert '{Example=@*i}' == encode[AnotherExample]()!.str()
 	assert '{NSRect={CGPoint=dd}{CGSize=dd}}' == encode[NSRect]()!.str()
 }
+
+[objc_encoding_name: CGRect]
+struct NSRect2 {
+	origin CGPoint [required]
+	size   CGSize  [required]
+}
+
+fn test_encode_struct_name_attr() {
+	assert '{CGRect={CGPoint=dd}{CGSize=dd}}' == encode[NSRect2]()!.str()
+}

@@ -8,6 +8,8 @@ pub fn encode[T]() !Encoding {
 	return encode_type(T.typ)
 }
 
+const objc_encoding_name_attr = 'objc_encoding_name='
+
 fn encode_type(idx int) !Encoding {
 	if idx == type_idx[objc.Id]() {
 		return Encoding.object()
@@ -77,11 +79,19 @@ fn encode_type(idx int) !Encoding {
 		}
 		.struct_ {
 			s := typ.sym.info as reflection.Struct
+
+			mut name := typ.name
+			for attr in s.attrs {
+				if attr.contains(encode.objc_encoding_name_attr) {
+					name = attr.replace(encode.objc_encoding_name_attr, '').trim(' ')
+					break
+				}
+			}
 			mut fields := []Encoding{}
 			for field in s.fields {
 				fields << encode_type(field.typ.idx())!
 			}
-			return Encoding.@struct(typ.name, fields)
+			return Encoding.@struct(name, fields)
 		}
 		.alias {
 			a := typ.sym.info as reflection.Alias
