@@ -11,3 +11,5 @@ fn C.sel_registerName(&char) voidptr
 
 fn C.objc_msgSend()
 fn C.objc_msgSend_stret()
+
+fn C.objc_allocateClassPair(superclass voidptr, name &char, extra_bytes usize) voidptr
