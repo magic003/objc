@@ -1,6 +1,6 @@
 module main
 
-import magic003.objc.encode { encode }
+import magic003.objc { encode }
 
 #include <Cocoa/Cocoa.h>
 #flag -framework Cocoa
