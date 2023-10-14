@@ -1,6 +1,4 @@
-module encode
-
-import objc
+module objc
 
 #include <Foundation/Foundation.h>
 #flag -framework Foundation
@@ -35,19 +33,19 @@ fn test_encode_voidptr() {
 }
 
 fn test_encode_object() {
-	assert '@' == encode[objc.Id]()!.str()
+	assert '@' == encode[Id]()!.str()
 }
 
 fn test_encode_sel() {
-	assert ':' == encode[objc.Sel]()!.str()
+	assert ':' == encode[Sel]()!.str()
 }
 
 fn test_encode_class() {
-	assert '#' == encode[objc.Class]()!.str()
+	assert '#' == encode[Class]()!.str()
 }
 
 struct Example {
-	obj objc.Id
+	obj Id
 	str string
 	num int
 }

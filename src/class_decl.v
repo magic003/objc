@@ -1,5 +1,7 @@
 module objc
 
+import encode
+
 // A type used to declare a new class.
 [noinit]
 pub struct ClassDecl {
@@ -16,4 +18,12 @@ pub fn ClassDecl.new(superclass Class, name string, extra_bytes usize) ?ClassDec
 		}
 		return none
 	}
+}
+
+// An interface of the method implementation which can be added to a class declaration.
+pub interface MethodImpl {
+	// imp returns the function implementation.
+	imp() Imp
+	// encodings returns the encodings of the method.
+	encodings() []encode.Encoding
 }
