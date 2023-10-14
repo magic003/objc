@@ -1,6 +1,6 @@
 module objc
 
-import encode
+import encode as ec
 
 // A type used to declare a new class.
 [noinit]
@@ -25,5 +25,21 @@ pub interface MethodImpl {
 	// imp returns the function implementation.
 	imp() Imp
 	// encodings returns the encodings of the method.
-	encodings() []encode.Encoding
+	encodings() []ec.Encoding
+}
+
+// A method without an argument and return value.
+pub type MethodVoid0 = fn (self Id, cmd Sel)
+
+[unsafe]
+fn (m MethodVoid0) imp() Imp {
+	unsafe {
+		return Imp(m)
+	}
+}
+
+fn (m MethodVoid0) encodings() []ec.Encoding {
+	id_encoding := encode[Id]() or { panic(err) }
+	sel_encoding := encode[Sel]() or { panic(err) }
+	return [ec.Encoding.void(), id_encoding, sel_encoding]
 }
