@@ -21,7 +21,7 @@ pub fn ClassDecl.new(superclass Class, name string, extra_bytes usize) ?ClassDec
 // add_method adds a new method to a class.
 pub fn (d ClassDecl) add_method(name Sel, method MethodImpl) bool {
 	types := method.encodings().map(it.str()).join('')
-	return C.class_addMethod(d.cls, name, method.imp(), &char(types.str))
+	return C.class_addMethod(d.cls, name, method.imp, &char(types.str))
 }
 
 // register registers the class.
