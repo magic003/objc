@@ -1,7 +1,5 @@
 module objc
 
-import encode as ec
-
 // A type used to declare a new class.
 [noinit]
 pub struct ClassDecl {
@@ -30,32 +28,4 @@ pub fn (d ClassDecl) add_method(name Sel, method MethodImpl) bool {
 pub fn (d ClassDecl) register() Class {
 	C.objc_registerClassPair(d.cls)
 	return Class{d.cls}
-}
-
-// An interface of the method implementation which can be added to a class declaration.
-pub interface MethodImpl {
-	// imp returns the function implementation.
-	imp() Imp
-	// encodings returns the encodings of the method.
-	encodings() []ec.Encoding
-}
-
-// A method without an argument and return value.
-// pub type MethodVoid0 = fn (self Id, cmd Sel) Id
-pub struct MethodVoid0 {
-	func fn (self Id, cmd Sel) Id [required]
-}
-
-[unsafe]
-fn (m MethodVoid0) imp() Imp {
-	unsafe {
-		return Imp(m.func)
-	}
-}
-
-fn (m MethodVoid0) encodings() []ec.Encoding {
-	id_encoding := encode[Id]() or { panic(err) }
-	sel_encoding := encode[Sel]() or { panic(err) }
-	// return [ec.Encoding.void(), id_encoding, sel_encoding]
-	return [id_encoding, id_encoding, sel_encoding]
 }
