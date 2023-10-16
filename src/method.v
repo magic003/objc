@@ -10,23 +10,23 @@ pub interface MethodImpl {
 	encodings() []ec.Encoding
 }
 
-// void_method creates a `MethodImpl` which doesn't have an argument and return value.
-pub fn void_method(imp fn (self Id, cmd Sel)) MethodImpl {
-	return VoidMethod{imp}
+// void_method_0 creates a `MethodImpl` which doesn't have an argument and return value.
+pub fn void_method_0(imp fn (self Id, cmd Sel)) MethodImpl {
+	return VoidMethod0{imp}
 }
 
-struct VoidMethod {
+struct VoidMethod0 {
 	func fn (self Id, cmd Sel) [required]
 }
 
 [unsafe]
-fn (m VoidMethod) imp() Imp {
+fn (m VoidMethod0) imp() Imp {
 	unsafe {
 		return Imp(m.func)
 	}
 }
 
-fn (m VoidMethod) encodings() []ec.Encoding {
+fn (m VoidMethod0) encodings() []ec.Encoding {
 	id_encoding := encode[Id]() or { panic(err) }
 	sel_encoding := encode[Sel]() or { panic(err) }
 	return [ec.Encoding.void(), id_encoding, sel_encoding]

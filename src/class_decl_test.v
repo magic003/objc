@@ -19,7 +19,7 @@ fn test_basic_class_decl() {
 	decl := ClassDecl.new(superclass, 'BasicClassDecl', 0) or {
 		panic('failed to create new ClassDecl')
 	}
-	method := void_method(fn (self Id, cmd Sel) {
+	method := void_method_0(fn (self Id, cmd Sel) {
 		println('hello')
 	})
 
