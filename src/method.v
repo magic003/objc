@@ -65,3 +65,23 @@ fn (m VoidMethod1[A]) encodings() []ec.Encoding {
 	a_encoding := encode[A]() or { panic(err) }
 	return [ec.Encoding.void(), id_encoding, sel_encoding, a_encoding]
 }
+
+// method_1 creates a `MethodImpl` which has one argument and returns a value.
+pub fn method_1[R, A](imp fn (self Id, cmd Sel, a A) R) MethodImpl {
+	unsafe {
+		return Method1[R, A]{Imp(imp)}
+	}
+}
+
+[noinit]
+struct Method1[R, A] {
+	imp Imp [required]
+}
+
+fn (m Method1[R, A]) encodings() []ec.Encoding {
+	ret_encoding := encode[R]() or { panic(err) }
+	id_encoding := encode[Id]() or { panic(err) }
+	sel_encoding := encode[Sel]() or { panic(err) }
+	a_encoding := encode[A]() or { panic(err) }
+	return [ret_encoding, id_encoding, sel_encoding, a_encoding]
+}
