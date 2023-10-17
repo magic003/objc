@@ -38,3 +38,12 @@ fn test_void_method_2_encodings() {
 	assert [ec.Encoding.void(), ec.Encoding.object(), ec.Encoding.sel(),
 		ec.Encoding.string(), ec.Encoding.uint()] == method.encodings()
 }
+
+fn test_method_2_encodings() {
+	func := fn (self Id, cmd Sel, b bool, v i64) int {
+		return 0
+	}
+	method := method_2[int, bool, i64](func)
+	assert [ec.Encoding.int(), ec.Encoding.object(), ec.Encoding.sel(),
+		ec.Encoding.bool(), ec.Encoding.long_long()] == method.encodings()
+}
