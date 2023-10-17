@@ -4,8 +4,7 @@ import encode as ec
 
 // An interface of the method implementation which can be added to a class declaration.
 pub interface MethodImpl {
-	// imp returns the function implementation.
-	// imp() Imp
+	// the function implementation.
 	imp Imp
 	// encodings returns the encodings of the method.
 	encodings() []ec.Encoding
@@ -21,16 +20,7 @@ pub fn void_method_0(imp fn (self Id, cmd Sel)) MethodImpl {
 [noinit]
 struct VoidMethod0 {
 	imp Imp [required]
-	// func fn (self Id, cmd Sel) [required]
 }
-
-/*
-[unsafe]
-fn (m VoidMethod0) imp() Imp {
-	unsafe {
-		return Imp(m.func)
-	}
-}*/
 
 fn (m VoidMethod0) encodings() []ec.Encoding {
 	id_encoding := encode[Id]() or { panic(err) }
@@ -48,16 +38,7 @@ pub fn method_0[R](imp fn (self Id, cmd Sel) R) MethodImpl {
 [noinit]
 struct Method0[R] {
 	imp Imp [required]
-	// func fn (self Id, cmd Sel) R [required]
 }
-
-/*
-[unsafe]
-fn (m Method0[R]) imp() Imp {
-	unsafe {
-		return Imp(m.func)
-	}
-}*/
 
 fn (m Method0[R]) encodings() []ec.Encoding {
 	ret_encoding := encode[R]() or { panic(err) }

@@ -9,23 +9,23 @@ fn test_class_decl_new() {
 	assert invalid_decl == none
 }
 
-[export: 'foo']
-fn foo(self Id, cmd Sel) {
-	println('foo')
-}
-
-fn test_basic_class_decl() {
+fn test_class_decl_methods() {
 	superclass := Class.get('NSObject') or { panic('failed to load class NSObject') }
 	decl := ClassDecl.new(superclass, 'BasicClassDecl', 0) or {
 		panic('failed to create new ClassDecl')
 	}
-	method := void_method_0(fn (self Id, cmd Sel) {
-		println('hello')
-	})
 
-	assert decl.add_method(sel('printMsg'), method)
-	decl.register()
-	cls := Class.get('BasicClassDecl') or { panic('failed to load class BasicClassDecl') }
+	vm0 := void_method_0(fn (self Id, cmd Sel) {})
+	assert decl.add_method(sel('vMethod0'), vm0)
+
+	m0 := method_0[int](fn (self Id, cmd Sel) int {
+		return 10
+	})
+	assert decl.add_method(sel('method0'), m0)
+
+	cls := decl.register()
 	obj := cls.message(sel('new')).request[Id]()
-	obj.message(sel('printMsg')).request[Id]()
+
+	obj.message(sel('vMethod0')).notify()
+	assert 10 == obj.message(sel('method0')).request[int]()
 }
