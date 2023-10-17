@@ -42,6 +42,11 @@ fn test_class_decl_methods() {
 	vm3 := void_method_3[string, u32, bool](fn (self Id, cmd Sel, str string, v u32, b bool) {})
 	assert decl.add_method(sel('vMethod3:v:b:'), vm3)
 
+	m3 := method_3[i64, Id, i64, string](fn (self Id, cmd Sel, obj Id, v i64, str string) i64 {
+		return v
+	})
+	assert decl.add_method(sel('method3:v:str:'), m3)
+
 	cls := decl.register()
 	obj := cls.message(sel('new')).request[Id]()
 
@@ -52,4 +57,5 @@ fn test_class_decl_methods() {
 	obj.message(sel('vMethod2:v:')).args2('str', 1).notify()
 	assert obj.message(sel('method2:v:')).args2(obj, 10000).request[bool]()
 	obj.message(sel('vMethod3:v:b:')).args3('str', 1, true).notify()
+	assert 10000 == obj.message(sel('method3:v:str:')).args3(obj, 10000, 'm3').request[i64]()
 }
