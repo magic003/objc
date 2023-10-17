@@ -31,6 +31,9 @@ fn test_class_decl_methods() {
 	})
 	assert decl.add_method(sel('method1:'), m1)
 
+	vm2 := void_method_2[string, u32](fn (self Id, cmd Sel, str string, v u32) {})
+	assert decl.add_method(sel('vMethod2:v:'), vm2)
+
 	cls := decl.register()
 	obj := cls.message(sel('new')).request[Id]()
 
@@ -38,4 +41,5 @@ fn test_class_decl_methods() {
 	assert 10 == obj.message(sel('method0')).request[int]()
 	obj.message(sel('vMethod1:')).args1('str').notify()
 	assert 20 == obj.message(sel('method1:')).args1(obj).request[int]()
+	obj.message(sel('vMethod2:v:')).args2('str', 1).notify()
 }
