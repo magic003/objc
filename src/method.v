@@ -126,3 +126,24 @@ fn (m Method2[R, A, B]) encodings() []ec.Encoding {
 	b_encoding := encode[B]() or { panic(err) }
 	return [ret_encoding, id_encoding, sel_encoding, a_encoding, b_encoding]
 }
+
+// void_method_3 creates a `MethodImpl` which has three arguments and no return value.
+pub fn void_method_3[A, B, D](imp fn (self Id, cmd Sel, a A, b B, d D)) MethodImpl {
+	unsafe {
+		return VoidMethod3[A, B, D]{Imp(imp)}
+	}
+}
+
+[noinit]
+struct VoidMethod3[A, B, D] {
+	imp Imp [required]
+}
+
+fn (m VoidMethod3[A, B, D]) encodings() []ec.Encoding {
+	id_encoding := encode[Id]() or { panic(err) }
+	sel_encoding := encode[Sel]() or { panic(err) }
+	a_encoding := encode[A]() or { panic(err) }
+	b_encoding := encode[B]() or { panic(err) }
+	d_encoding := encode[D]() or { panic(err) }
+	return [ec.Encoding.void(), id_encoding, sel_encoding, a_encoding, b_encoding, d_encoding]
+}
