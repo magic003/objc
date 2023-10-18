@@ -1,5 +1,7 @@
 module objc
 
+import math.bits
+
 // A type used to declare a new class.
 [noinit]
 pub struct ClassDecl {
@@ -16,6 +18,18 @@ pub fn ClassDecl.new(superclass Class, name string, extra_bytes usize) ?ClassDec
 		}
 		return none
 	}
+}
+
+// add_ivar adds a new instance variable of type `T` to a class.
+pub fn (d ClassDecl) add_ivar[T](name string) bool {
+	size := sizeof(T)
+	// WARNING: this may not work in all circumstances. It's not the optimal solution either.
+	// It assumes:
+	//   * sizeof(T) >= alignOf(T)
+	//   * sizeof(T) is always a power of 2
+	// log2 of a power of 2 is the number of trailing zeros.
+	log2_alignment := u8(bits.trailing_zeros_32(size))
+	return C.class_addIvar(d.cls, &char(name.str), size, log2_alignment, &char(types.str))
 }
 
 // add_method adds a new method to a class.

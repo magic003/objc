@@ -13,5 +13,6 @@ fn C.objc_msgSend()
 fn C.objc_msgSend_stret()
 
 fn C.objc_allocateClassPair(superclass voidptr, name &char, extra_bytes usize) voidptr
+fn C.class_addIvar(cls voidptr, name &char, size u32, alignment u8, types &char) bool
 fn C.class_addMethod(cls voidptr, sel voidptr, imp fn (), types &char) bool
 fn C.objc_registerClassPair(cls voidptr)
