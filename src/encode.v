@@ -20,6 +20,10 @@ fn encode_type(idx int) !ec.Encoding {
 	if idx == type_idx[Class]() {
 		return ec.Encoding.class()
 	}
+	// reflection.get_type(idx) doesn't return &char type. Have to do this special check here.
+	if idx == typeof[&char]().idx {
+		return ec.Encoding.string()
+	}
 	typ := reflection.get_type(idx) or {
 		panic('Cannot get type for ${idx}. It is probably a bug in the library.')
 	}

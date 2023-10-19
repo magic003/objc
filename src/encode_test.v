@@ -26,6 +26,7 @@ fn test_encode_bool() {
 fn test_encode_strings() {
 	assert '*' == encode[string]()!.str()
 	assert '*' == encode[rune]()!.str()
+	assert '*' == encode[&char]()!.str()
 }
 
 fn test_encode_voidptr() {
