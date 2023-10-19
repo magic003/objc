@@ -30,7 +30,7 @@ pub fn (d ClassDecl) add_ivar[T](name string) bool {
 	// log2 of a power of 2 is the number of trailing zeros.
 	log2_alignment := u8(bits.trailing_zeros_32(size))
 	types := encode[T]() or { panic(err) }
-	return C.class_addIvar(d.cls, &char(name.str), size, log2_alignment, &char(types.str))
+	return C.class_addIvar(d.cls, &char(name.str), size, log2_alignment, &char(types.str().str))
 }
 
 // add_method adds a new method to a class.

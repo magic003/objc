@@ -15,3 +15,19 @@ fn test_class_message() {
 		assert obj != nil
 	}
 }
+
+fn test_class_instance_variable() {
+	superclass := Class.get('NSObject') or { panic('failed to load class NSObject') }
+	decl := ClassDecl.new(superclass, 'TestClassIvar', 0) or {
+		panic('failed to create new ClassDecl')
+	}
+
+	decl.add_ivar[i64]('num')
+
+	cls := decl.register()
+
+	ivar := cls.instance_variable('num')
+	unsafe {
+		assert ivar.ptr != nil
+	}
+}

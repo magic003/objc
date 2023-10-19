@@ -22,3 +22,11 @@ pub fn Class.get(name string) ?Class {
 pub fn (c Class) message(op Sel) MsgBuilder {
 	return MsgBuilder{Id(c.ptr), op}
 }
+
+// instance_variable returns the `Ivar` for a specified instance variable of a given class.
+pub fn (c Class) instance_variable(name string) Ivar {
+	ivar := C.class_getInstanceVariable(c.ptr, &char(name.str))
+	return Ivar{
+		ptr: ivar
+	}
+}
