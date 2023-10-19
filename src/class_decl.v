@@ -29,6 +29,7 @@ pub fn (d ClassDecl) add_ivar[T](name string) bool {
 	//   * sizeof(T) is always a power of 2
 	// log2 of a power of 2 is the number of trailing zeros.
 	log2_alignment := u8(bits.trailing_zeros_32(size))
+	types := encode[T]() or { panic(err) }
 	return C.class_addIvar(d.cls, &char(name.str), size, log2_alignment, &char(types.str))
 }
 

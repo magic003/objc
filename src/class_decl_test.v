@@ -69,3 +69,13 @@ fn test_class_decl_methods() {
 	obj.message(sel('vMethod4:v:b:s:')).args4('str', 1, true, 2).notify()
 	assert 3 == obj.message(sel('method4:v:str:uc:')).args4(obj, 10000, 'm4', 3).request[u8]()
 }
+
+fn test_add_ivar() {
+	superclass := Class.get('NSObject') or { panic('failed to load class NSObject') }
+	decl := ClassDecl.new(superclass, 'TestAddIvar', 0) or {
+		panic('failed to create new ClassDecl')
+	}
+
+	assert decl.add_ivar[i64]('num')
+	assert false == decl.add_ivar[i64]('num')
+}
