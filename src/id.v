@@ -9,3 +9,6 @@ pub fn (id Id) message(op Sel) MsgBuilder {
 		return MsgBuilder{id, op}
 	}
 }
+
+pub fn (id Id) set_ivar[T](name string, value T) {
+}

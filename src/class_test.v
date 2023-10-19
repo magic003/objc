@@ -27,7 +27,7 @@ fn test_class_instance_variable() {
 	cls := decl.register()
 
 	ivar := cls.instance_variable('num')
-	unsafe {
-		assert ivar.ptr != nil
-	}
+	assert ivar != none
+	non_exist_ivar := cls.instance_variable('invalid')
+	assert non_exist_ivar == none
 }

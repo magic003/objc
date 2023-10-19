@@ -10,7 +10,7 @@ fn test_ivar() {
 
 	cls := decl.register()
 
-	ivar := cls.instance_variable('num')
+	ivar := cls.instance_variable('num') or { panic('failed to get instance variable') }
 	assert 'num' == ivar.name()
 	assert ec.Encoding.long_long().str() == ivar.type_encoding()
 	assert ivar.offset() > 0
