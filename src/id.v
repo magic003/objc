@@ -18,5 +18,22 @@ pub fn (id Id) class() Class {
 	}
 }
 
+// set_ivar sets the value of an instance variable.
 pub fn (id Id) set_ivar[T](name string, value T) {
+	ivar := id.class().instance_variable(name) or { panic('Ivar ${name} not found.') }
+	unsafe {
+		mut ptr := &u8(voidptr(id))
+		ptr = ptr + ivar.offset()
+		*ptr = value
+	}
+}
+
+// set_ivar returns the value of an instance variable.
+pub fn (id Id) get_ivar[T](name string) T {
+	ivar := id.class().instance_variable(name) or { panic('Ivar ${name} not found.') }
+	unsafe {
+		mut ptr := &u8(voidptr(id))
+		ptr = ptr + ivar.offset()
+		return T(*ptr)
+	}
 }
