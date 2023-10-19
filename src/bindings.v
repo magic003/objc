@@ -21,3 +21,5 @@ fn C.objc_registerClassPair(cls voidptr)
 fn C.ivar_getName(ivar voidptr) &char
 fn C.ivar_getTypeEncoding(ivar voidptr) &char
 fn C.ivar_getOffset(ivar voidptr) isize
+
+fn C.object_getClass(id voidptr) voidptr

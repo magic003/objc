@@ -10,5 +10,13 @@ pub fn (id Id) message(op Sel) MsgBuilder {
 	}
 }
 
+// class returns the class of this instance.
+pub fn (id Id) class() Class {
+	cls := C.object_getClass(id)
+	return Class{
+		ptr: cls
+	}
+}
+
 pub fn (id Id) set_ivar[T](name string, value T) {
 }
