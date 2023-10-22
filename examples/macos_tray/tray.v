@@ -29,57 +29,63 @@ struct TrayApp {
 }
 
 fn TrayApp.new() TrayApp {
-	app := ns_application_cls.message(sel('sharedApplication')).request[objc.Id]()
+	app := unsafe { ns_application_cls.message(sel('sharedApplication')).request[objc.Id]() }
 	return TrayApp{app}
 }
 
 fn (app &TrayApp) init() {
-	status_bar := ns_status_bar_cls.message(sel('systemStatusBar')).request[objc.Id]()
-	status_item := status_bar.message(sel('statusItemWithLength:')).args1(ns_square_status_item_length)
-		.request[objc.Id]()
-	status_item.message(sel('setVisible:')).args1(objc.yes).notify()
-	btn := status_item.message(sel('button')).request[objc.Id]()
+	unsafe {
+		status_bar := ns_status_bar_cls.message(sel('systemStatusBar')).request[objc.Id]()
+		status_item := status_bar.message(sel('statusItemWithLength:')).args1(ns_square_status_item_length)
+			.request[objc.Id]()
+		status_item.message(sel('setVisible:')).args1(objc.yes).notify()
+		btn := status_item.message(sel('button')).request[objc.Id]()
 
-	img := ns_image_cls.message(sel('imageNamed:')).args1(new_ns_string('icon.png')).request[objc.Id]()
-	btn.message(sel('setImage:')).args1(img).notify()
+		img := ns_image_cls.message(sel('imageNamed:')).args1(new_ns_string('icon.png')).request[objc.Id]()
+		btn.message(sel('setImage:')).args1(img).notify()
 
-	menu := app.build_menu()
-	status_item.message(sel('setMenu:')).args1(menu).notify()
+		menu := app.build_menu()
+		status_item.message(sel('setMenu:')).args1(menu).notify()
+	}
 }
 
 fn (app &TrayApp) run() {
-	app.app.message(sel('run')).notify()
+	unsafe {
+		app.app.message(sel('run')).notify()
+	}
 }
 
 fn (app &TrayApp) build_menu() objc.Id {
-	menu := ns_menu_cls.message(sel('new')).request[objc.Id]()
-	menu.message(sel('setAutoenablesItems:')).args1(objc.no).notify()
+	unsafe {
+		menu := ns_menu_cls.message(sel('new')).request[objc.Id]()
+		menu.message(sel('setAutoenablesItems:')).args1(objc.no).notify()
 
-	items := [
-		MenuItem{
-			id: 'hello'
-			text: 'Hello'
-		},
-		MenuItem{
-			id: 'quit'
-			text: 'Quit'
-		},
-	]
+		items := [
+			MenuItem{
+				id: 'hello'
+				text: 'Hello'
+			},
+			MenuItem{
+				id: 'quit'
+				text: 'Quit'
+			},
+		]
 
-	for item in items {
-		title := new_ns_string(item.text)
-		menu_item := ns_menu_item_cls.message(sel('new')).request[objc.Id]()
-		menu_item.message(sel('setTitle:')).args1(title).notify()
-		menu_item.message(sel('setEnabled:')).args1(objc.yes).notify()
-		if item.id == 'quit' {
-			menu_item.message(sel('setTarget:')).args1(app.app).notify()
-			menu_item.message(sel('setAction:')).args1(sel('terminate:')).notify()
+		for item in items {
+			title := new_ns_string(item.text)
+			menu_item := ns_menu_item_cls.message(sel('new')).request[objc.Id]()
+			menu_item.message(sel('setTitle:')).args1(title).notify()
+			menu_item.message(sel('setEnabled:')).args1(objc.yes).notify()
+			if item.id == 'quit' {
+				menu_item.message(sel('setTarget:')).args1(app.app).notify()
+				menu_item.message(sel('setAction:')).args1(sel('terminate:')).notify()
+			}
+
+			menu.message(sel('addItem:')).args1(menu_item).notify()
 		}
 
-		menu.message(sel('addItem:')).args1(menu_item).notify()
+		return menu
 	}
-
-	return menu
 }
 
 struct MenuItem {
@@ -88,9 +94,11 @@ struct MenuItem {
 }
 
 fn new_ns_string(str string) objc.Id {
-	data := ns_data_cls.message(sel('dataWithBytes:length:')).args2(str.str, str.len).request[objc.Id]()
-	return ns_string_cls.message(sel('alloc')).request[objc.Id]()
-		.message(sel('initWithData:encoding:'))
-		.args2(data, ns_ascii_string_encoding)
-		.request[objc.Id]()
+	unsafe {
+		data := ns_data_cls.message(sel('dataWithBytes:length:')).args2(str.str, str.len).request[objc.Id]()
+		return ns_string_cls.message(sel('alloc')).request[objc.Id]()
+			.message(sel('initWithData:encoding:'))
+			.args2(data, ns_ascii_string_encoding)
+			.request[objc.Id]()
+	}
 }

@@ -7,11 +7,13 @@ const ns_application_cls = class('NSApplication') or { panic('failed to load cla
 const activation_policy_regular = i64(0)
 
 fn main() {
-	app := ns_application_cls.message(sel('sharedApplication')).request[objc.Id]()
-	app.message(sel('setActivationPolicy:')).args1(activation_policy_regular).notify()
+	unsafe {
+		app := ns_application_cls.message(sel('sharedApplication')).request[objc.Id]()
+		app.message(sel('setActivationPolicy:')).args1(activation_policy_regular).notify()
 
-	delegate := AppDelegate.new(app)
-	app.message(sel('setDelegate:')).args1(delegate.delegate).notify()
+		delegate := AppDelegate.new(app)
+		app.message(sel('setDelegate:')).args1(delegate.delegate).notify()
 
-	app.message(sel('run')).notify()
+		app.message(sel('run')).notify()
+	}
 }
