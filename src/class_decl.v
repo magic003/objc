@@ -34,6 +34,8 @@ pub fn (d ClassDecl) add_ivar[T](name string) bool {
 }
 
 // add_method adds a new method to a class.
+// Unsafe because the caller must ensure the method type matches that is expected by Objective-C.
+[unsafe]
 pub fn (d ClassDecl) add_method(name Sel, method MethodImpl) bool {
 	types := method.encodings().map(it.str()).join('')
 	return C.class_addMethod(d.cls, name, method.imp, &char(types.str))

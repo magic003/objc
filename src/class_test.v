@@ -10,8 +10,8 @@ fn test_class_get() {
 
 fn test_class_message() {
 	cls := Class.get('NSObject') or { panic('failed to load class NSObject') }
-	obj := cls.message(Sel.get('new')).request[Id]()
 	unsafe {
+		obj := cls.message(Sel.get('new')).request[Id]()
 		assert obj != nil
 	}
 }
