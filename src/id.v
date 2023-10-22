@@ -21,16 +21,24 @@ pub fn (id Id) class() Class {
 // set_ivar sets the value of an instance variable.
 pub fn (id Id) set_ivar[T](name string, value T) {
 	ivar := id.class().instance_variable(name) or { panic('Ivar ${name} not found.') }
-	unsafe {
-		mut ptr := &u8(voidptr(id))
-		ptr = ptr + ivar.offset()
-		*ptr = value
+	if typeof[T]() == typeof[Id]() {
+		C.object_setIvar(id, ivar.ptr, value)
+	} else {
+		unsafe {
+			mut ptr := &u8(voidptr(id))
+			println('${name} offset: ${ivar.offset()}')
+			ptr = ptr + ivar.offset()
+			*ptr = value
+		}
 	}
 }
 
 // set_ivar returns the value of an instance variable.
 pub fn (id Id) get_ivar[T](name string) T {
 	ivar := id.class().instance_variable(name) or { panic('Ivar ${name} not found.') }
+	if typeof[T]() == typeof[Id]() {
+		return T(C.object_getIvar(id, ivar.ptr))
+	}
 	unsafe {
 		mut ptr := &u8(voidptr(id))
 		ptr = ptr + ivar.offset()

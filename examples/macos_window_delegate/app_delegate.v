@@ -36,19 +36,20 @@ const window_style_resizable = u64(1) << 3
 
 const backing_store_type_buffered = u64(2)
 
+const ivar_app = 'app'
+
 [heap]
 struct AppDelegate {
 	delegate objc.Id [required]
 }
 
-fn AppDelegate.new() AppDelegate {
+fn AppDelegate.new(app objc.Id) AppDelegate {
 	delegate := app_delegate_cls.message(sel('alloc')).request[objc.Id]()
+	delegate.set_ivar(ivar_app, app)
 	return AppDelegate{delegate}
 }
 
-fn init_window_and_menu() objc.Id {
-	app := ns_application_cls.message(sel('sharedApplication')).request[objc.Id]()
-
+fn init_window_and_menu(app objc.Id) objc.Id {
 	menu_bar := ns_menu_cls.message(sel('new')).request[objc.Id]()
 	app_menu_item := ns_menu_item_cls.message(sel('new')).request[objc.Id]()
 	menu_bar.message(sel('addItem:')).args1(app_menu_item).notify()
@@ -74,6 +75,7 @@ fn register_app_delegate_class() objc.Class {
 	decl := objc.ClassDecl.new(ns_object_cls, 'AppDelegate', 0) or {
 		panic('failed to declare class AppDelegate')
 	}
+	decl.add_ivar[objc.Id](ivar_app)
 	decl.add_method(sel('applicationWillFinishLaunching:'), void_method_1(application_will_finish_launching))
 	decl.add_method(sel('applicationDidFinishLaunching:'), void_method_1(application_did_finish_launching))
 
@@ -86,9 +88,9 @@ fn application_will_finish_launching(self objc.Id, cmd objc.Sel, notification ob
 
 fn application_did_finish_launching(self objc.Id, cmd objc.Sel, notification objc.Id) {
 	println('application_did_finish_launching called')
-	window := init_window_and_menu()
+	app := self.get_ivar[objc.Id](ivar_app)
+	window := init_window_and_menu(app)
 
-	app := ns_application_cls.message(sel('sharedApplication')).request[objc.Id]()
 	app.message(sel('activateIgnoringOtherApps:')).args1(objc.yes).notify()
 	window.message(sel('makeKeyAndOrderFront:')).args1(app).notify()
 }
