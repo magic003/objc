@@ -88,7 +88,7 @@ m1 := objc.void_method_1[bool](fn (self objc.Id, cmd objc.Sel, flag bool) {
     // do something
 })
 unsafe { decl.add_method(objc.sel('method1:'), m1) }
-m2: = objc.method_1[int, objc.Id](fn (self objc.Id, cmd objc.Sel, obj objc.Id) int {
+m2 := objc.method_1[int, objc.Id](fn (self objc.Id, cmd objc.Sel, obj objc.Id) int {
     return 10
 })
 unsafe { delc.add_method(objc.sel('method2:'), m2) }
