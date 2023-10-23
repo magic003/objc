@@ -2,7 +2,7 @@ This vlang package provides Objective-C Runtime bindings for V.
 
 ## Status
 It is currently working in progress and should be considered experimental. It's only tested on 
-x86\_64 architecture, macOS Ventura 13.5.
+x86\_64 architecture, macOS Sonoma 14.0.
 
 Supported features:
 * Bool type
@@ -11,6 +11,7 @@ Supported features:
 * Create instances
 * Register selectors
 * Send messages (varargs are not supported)
+* Class declaration
 
 ## Installation
 ```shell
@@ -49,21 +50,62 @@ Messages can be sent to a class or an instance. There are two types of messages:
 * `notify()`: a message without a return value.
 
 ```v
-// a mutable array instance is created via chained messages
-arr := cls1.message(objc.sel('alloc')).request[objc.Id]()
-        .message(objc.sel('init')).request[objc.Id]()
+unsafe {
+    // a mutable array instance is created via chained messages
+    arr := cls1.message(objc.sel('alloc')).request[objc.Id]()
+            .message(objc.sel('init')).request[objc.Id]()
 
-// load the NSObject class and create an instance
-obj_cls := objc.class('NSObject') or { panic('failed to load class NSObject') }
-obj := obj_cls.message(sel('new')).request[objc.Id]()
+    // load the NSObject class and create an instance
+    obj_cls := objc.class('NSObject') or { panic('failed to load class NSObject') }
+    obj := obj_cls.message(sel('new')).request[objc.Id]()
 
-// add an object to the array. Message with one argument and no return value. 
-// Use `args2()`, `args3()` and etc for more arguments.
-arr.message(sel('addObject:')).args1(obj).notify()
+    // add an object to the array. Message with one argument and no return value. 
+    // Use `args2()`, `args3()` and etc for more arguments.
+    arr.message(sel('addObject:')).args1(obj).notify()
 
-// message without an argument.
-size := arr.message(sel('count')).request[u64]()
-assert size == 1
+    // message without an argument.
+    size := arr.message(sel('count')).request[u64]()
+    assert size == 1
+}
+```
+
+### Declare a new class
+New classes can be declared and registered with the Objective-C Runtime.
+
+```v
+superclass := objc.class('NSObject') or { panic('failed to load class NSObject') }
+// create a new class with `NSObject` as the super class.
+decl := ClassDecl.new(superclass, 'NewClass', 0) or {
+    panic('failed to create class NewClass')
+}
+
+// add ivars
+decl.add_ivar[i64]('num')
+decl.add_ivar[objc.Id]('obj')
+
+// add methods
+m1 := objc.void_method_1[bool](fn (self objc.Id, cmd objc.Sel, flag bool) {
+    // do something
+})
+unsafe { decl.add_method(objc.sel('method1:'), m1) }
+m2: = objc.method_1[int, objc.Id](fn (self objc.Id, cmd objc.Sel, obj objc.Id) int {
+    return 10
+})
+unsafe { delc.add_method(objc.sel('method2:'), m2) }
+
+// register the class
+cls := decl.register()
+
+unsafe {
+    // create an instance from the new class
+    obj := cls.message(objc.sel('new')).request[objc.Id]()
+    
+    // set ivar
+    obj.set_ivar('num', 1)
+
+    // call method
+    obj.message(objc.sel('method1:')).args1(true).notify()
+}
 ```
 
 ## Examples
