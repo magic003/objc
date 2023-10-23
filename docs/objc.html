@@ -36,7 +36,7 @@
 						<div class="info">
 							<div class="module">objc</div>
 							<div class="toggle-version-container">
-								<span>0.0.1 6813a12</span>
+								<span>0.0.2 44045c6</span>
 								<div
 									id="dark-mode-toggle"
 									role="switch"
@@ -59,7 +59,7 @@
 				<nav class="search hidden"></nav>
 				<nav class="content hidden">
 					<ul>
-						<li class="open"><div class="menu-row"><a href="./index.html">README</a></div></li><li class="open active"><div class="menu-row"><a href="./objc.html">objc</a></div></li>
+						<li class="open"><div class="menu-row"><a href="./index.html">README</a></div></li><li class="open"><div class="menu-row"><a href="./encode.html">encode</a></div></li><li class="open"><div class="menu-row"><a href="./main.html">main</a></div></li><li class="open active"><div class="menu-row"><a href="./objc.html">objc</a></div></li>
 					</ul>
 				</nav>
 			</header>
@@ -70,7 +70,7 @@
 			<div class="title"><h1> objc <a href="#readme_objc">#</a></h1></div><p>This vlang package provides Objective-C Runtime bindings for V.</p>
 <h2>Status</h2>
 <p>It is currently working in progress and should be considered experimental. It's only tested on
-x86_64 architecture, macOS Ventura 13.5.</p>
+x86_64 architecture, macOS Sonoma 14.0.</p>
 <p>Supported features:</p>
 <ul>
 <li>Bool type</li>
@@ -79,6 +79,7 @@ x86_64 architecture, macOS Ventura 13.5.</p>
 <li>Create instances</li>
 <li>Register selectors</li>
 <li>Send messages (varargs are not supported)</li>
+<li>Class declaration</li>
 </ul>
 <h2>Installation</h2>
 <pre><code class="language-shell">v install magic003.objc
@@ -105,27 +106,68 @@ s2 := objc.sel('init')
 <li><code>request[R]()</code>: a message with return type <code>R</code>.</li>
 <li><code>notify()</code>: a message without a return value.</li>
 </ul>
-<pre><code class="language-v">// a mutable array instance is created via chained messages
-arr := cls1.message(objc.sel('alloc')).request[objc.Id]()
-        .message(objc.sel('init')).request[objc.Id]()
+<pre><code class="language-v">unsafe {
+    // a mutable array instance is created via chained messages
+    arr := cls1.message(objc.sel('alloc')).request[objc.Id]()
+            .message(objc.sel('init')).request[objc.Id]()
 
-// load the NSObject class and create an instance
-obj_cls := objc.class('NSObject') or { panic('failed to load class NSObject') }
-obj := obj_cls.message(sel('new')).request[objc.Id]()
+    // load the NSObject class and create an instance
+    obj_cls := objc.class('NSObject') or { panic('failed to load class NSObject') }
+    obj := obj_cls.message(sel('new')).request[objc.Id]()
 
-// add an object to the array. Message with one argument and no return value. 
-// Use `args2()`, `args3()` and etc for more arguments.
-arr.message(sel('addObject:')).args1(obj).notify()
+    // add an object to the array. Message with one argument and no return value. 
+    // Use `args2()`, `args3()` and etc for more arguments.
+    arr.message(sel('addObject:')).args1(obj).notify()
 
-// message without an argument.
-size := arr.message(sel('count')).request[u64]()
-assert size == 1
+    // message without an argument.
+    size := arr.message(sel('count')).request[u64]()
+    assert size == 1
+}
+</code></pre>
+<h3>Declare a new class</h3>
+<p>New classes can be declared and registered with the Objective-C Runtime.</p>
+<pre><code class="language-v">superclass := objc.class('NSObject') or { panic('failed to load class NSObject') }
+// create a new class with `NSObject` as the super class.
+decl := ClassDecl.new(superclass, 'NewClass', 0) or {
+    panic('failed to create class NewClass')
+}
+
+// add ivars
+decl.add_ivar[i64]('num')
+decl.add_ivar[objc.Id]('obj')
+
+// add methods
+m1 := objc.void_method_1[bool](fn (self objc.Id, cmd objc.Sel, flag bool) {
+    // do something
+})
+unsafe { decl.add_method(objc.sel('method1:'), m1) }
+m2: = objc.method_1[int, objc.Id](fn (self objc.Id, cmd objc.Sel, obj objc.Id) int {
+    return 10
+})
+unsafe { delc.add_method(objc.sel('method2:'), m2) }
+
+// register the class
+cls := decl.register()
+
+unsafe {
+    // create an instance from the new class
+    obj := cls.message(objc.sel('new')).request[objc.Id]()
+    
+    // set ivar
+    obj.set_ivar('num', 1)
+
+    // call method
+    obj.message(objc.sel('method1:')).args1(true).notify()
+}
 </code></pre>
 <h2>Examples</h2>
 <p>The unit tests have basic usages.</p>
 <p>Check out the <code>examples</code> folder for more examples.</p>
 <h2>Documentation</h2>
-<p>Documentation: <a href="http://magic003.github.io/objc">http://magic003.github.io/objc</a></p>
+<ul>
+<li>API Documentation: <a href="http://magic003.github.io/objc">http://magic003.github.io/objc</a></li>
+<li>Why this project: <a href="https://open.substack.com/pub/insideout101/p/v-and-objective-c-interoperability?r=2rxz0s&amp;utm_campaign=post&amp;utm_medium=web">V and Objective-C interoperability</a></li>
+</ul>
 <h2>References</h2>
 <ul>
 <li><a href="https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC">Programming with Objective-C</a></li>
@@ -149,6 +191,50 @@ assert size == 1
 <p>no as false.</p>
 
 </section>
+		<section id="class" class="doc-node">
+			<div class="title"><h2>fn class <a href="#class">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">class</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">?</span>Class</code></pre>
+<p>class returns the class definition of a specified class. It returns <code>none</code> if
+the class is not registered with the Objective-C runtime.</p>
+
+<section class="doc-node examples"><h4>Example</h4>
+<pre><code class="language-v">cls <span class="token operator">:=</span> <span class="token function">class</span><span class="token punctuation">(</span><span class="token string">'NSObject'</span><span class="token punctuation">)</span> <span class="token keyword">or</span> <span class="token punctuation">{</span> <span class="token function">panic</span><span class="token punctuation">(</span><span class="token string">'failed to load class NSObject'</span><span class="token punctuation">)</span> <span class="token punctuation">}</span></code></pre>
+</section>
+</section>
+		<section id="void_method_4" class="doc-node">
+			<div class="title"><h2>fn void_method_4 <a href="#void_method_4">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> void_method_4<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">,</span> <span class="token builtin">D</span><span class="token punctuation">,</span> <span class="token builtin">E</span><span class="token punctuation">]</span><span class="token punctuation">(</span>imp <span class="token keyword">fn</span> <span class="token punctuation">(</span>self Id<span class="token punctuation">,</span> cmd Sel<span class="token punctuation">,</span> a <span class="token builtin">A</span><span class="token punctuation">,</span> b <span class="token builtin">B</span><span class="token punctuation">,</span> d <span class="token builtin">D</span><span class="token punctuation">,</span> e <span class="token builtin">E</span><span class="token punctuation">)</span><span class="token punctuation">)</span> MethodImpl</code></pre>
+<p>void_method_4 creates a <code>MethodImpl</code> which has four arguments and no return value.</p>
+
+</section>
+		<section id="encode" class="doc-node">
+			<div class="title"><h2>fn encode <a href="#encode">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> encode<span class="token punctuation">[</span><span class="token builtin">T</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span>ec<span class="token punctuation">.</span>Encoding</code></pre>
+<p>encode returns the Objective-C encoding of the type parameter <code>T</code>.</p>
+
+</section>
+		<section id="method_0" class="doc-node">
+			<div class="title"><h2>fn method_0 <a href="#method_0">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> method_0<span class="token punctuation">[</span><span class="token builtin">R</span><span class="token punctuation">]</span><span class="token punctuation">(</span>imp <span class="token keyword">fn</span> <span class="token punctuation">(</span>self Id<span class="token punctuation">,</span> cmd Sel<span class="token punctuation">)</span> <span class="token builtin">R</span><span class="token punctuation">)</span> MethodImpl</code></pre>
+<p>method_0 creates a <code>MethodImpl</code> which returns a value and doesn't have an argument.</p>
+
+</section>
+		<section id="method_1" class="doc-node">
+			<div class="title"><h2>fn method_1 <a href="#method_1">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> method_1<span class="token punctuation">[</span><span class="token builtin">R</span><span class="token punctuation">,</span> <span class="token builtin">A</span><span class="token punctuation">]</span><span class="token punctuation">(</span>imp <span class="token keyword">fn</span> <span class="token punctuation">(</span>self Id<span class="token punctuation">,</span> cmd Sel<span class="token punctuation">,</span> a <span class="token builtin">A</span><span class="token punctuation">)</span> <span class="token builtin">R</span><span class="token punctuation">)</span> MethodImpl</code></pre>
+<p>method_1 creates a <code>MethodImpl</code> which has one argument and returns a value.</p>
+
+</section>
+		<section id="method_2" class="doc-node">
+			<div class="title"><h2>fn method_2 <a href="#method_2">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> method_2<span class="token punctuation">[</span><span class="token builtin">R</span><span class="token punctuation">,</span> <span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">]</span><span class="token punctuation">(</span>imp <span class="token keyword">fn</span> <span class="token punctuation">(</span>self Id<span class="token punctuation">,</span> cmd Sel<span class="token punctuation">,</span> a <span class="token builtin">A</span><span class="token punctuation">,</span> b <span class="token builtin">B</span><span class="token punctuation">)</span> <span class="token builtin">R</span><span class="token punctuation">)</span> MethodImpl</code></pre>
+<p>method_2 creates a <code>MethodImpl</code> which has two arguments and returns a value.</p>
+
+</section>
+		<section id="method_3" class="doc-node">
+			<div class="title"><h2>fn method_3 <a href="#method_3">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> method_3<span class="token punctuation">[</span><span class="token builtin">R</span><span class="token punctuation">,</span> <span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">,</span> <span class="token builtin">D</span><span class="token punctuation">]</span><span class="token punctuation">(</span>imp <span class="token keyword">fn</span> <span class="token punctuation">(</span>self Id<span class="token punctuation">,</span> cmd Sel<span class="token punctuation">,</span> a <span class="token builtin">A</span><span class="token punctuation">,</span> b <span class="token builtin">B</span><span class="token punctuation">,</span> d <span class="token builtin">D</span><span class="token punctuation">)</span> <span class="token builtin">R</span><span class="token punctuation">)</span> MethodImpl</code></pre>
+<p>method_3 creates a <code>MethodImpl</code> which has three arguments and returns a value.</p>
+
+</section>
+		<section id="method_4" class="doc-node">
+			<div class="title"><h2>fn method_4 <a href="#method_4">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> method_4<span class="token punctuation">[</span><span class="token builtin">R</span><span class="token punctuation">,</span> <span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">,</span> <span class="token builtin">D</span><span class="token punctuation">,</span> <span class="token builtin">E</span><span class="token punctuation">]</span><span class="token punctuation">(</span>imp <span class="token keyword">fn</span> <span class="token punctuation">(</span>self Id<span class="token punctuation">,</span> cmd Sel<span class="token punctuation">,</span> a <span class="token builtin">A</span><span class="token punctuation">,</span> b <span class="token builtin">B</span><span class="token punctuation">,</span> d <span class="token builtin">D</span><span class="token punctuation">,</span> e <span class="token builtin">E</span><span class="token punctuation">)</span> <span class="token builtin">R</span><span class="token punctuation">)</span> MethodImpl</code></pre>
+<p>method_4 creates a <code>MethodImpl</code> which has four arguments and returns a value.</p>
+
+</section>
 		<section id="sel" class="doc-node">
 			<div class="title"><h2>fn sel <a href="#sel">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">sel</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">)</span> Sel</code></pre>
 <p>sel registers a method with the Objective-C runtime system, maps the method name to a
@@ -159,43 +245,67 @@ selector, and returns the selector value.</p>
 sel2 <span class="token operator">:=</span> <span class="token function">sel</span><span class="token punctuation">(</span><span class="token string">'allocWithZone:'</span><span class="token punctuation">)</span></code></pre>
 </section>
 </section>
-		<section id="class" class="doc-node">
-			<div class="title"><h2>fn class <a href="#class">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">class</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">?</span>Class</code></pre>
-<p>class returns the class definition of a specified class. It returns <code>none</code> if
-the class is not registered with the Objective-C runtime.</p>
-
-<section class="doc-node examples"><h4>Example</h4>
-<pre><code class="language-v">cls <span class="token operator">:=</span> <span class="token function">class</span><span class="token punctuation">(</span><span class="token string">'NSObject'</span><span class="token punctuation">)</span> <span class="token keyword">or</span> <span class="token punctuation">{</span> <span class="token function">panic</span><span class="token punctuation">(</span><span class="token string">'failed to load class NSObject'</span><span class="token punctuation">)</span> <span class="token punctuation">}</span></code></pre>
-</section>
-</section>
-		<section id="Msg2[A,-B].request" class="doc-node">
-			<div class="title"><h2>fn (Msg2[A, B]) request <a href="#Msg2[A,-B].request">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg2<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">]</span><span class="token punctuation">)</span> request<span class="token punctuation">[</span><span class="token builtin">R</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">R</span></code></pre>
-<p>request sends a message requesting for a value of type <code>R</code>.</p>
+		<section id="void_method_0" class="doc-node">
+			<div class="title"><h2>fn void_method_0 <a href="#void_method_0">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">void_method_0</span><span class="token punctuation">(</span>imp <span class="token keyword">fn</span> <span class="token punctuation">(</span>self Id<span class="token punctuation">,</span> cmd Sel<span class="token punctuation">)</span><span class="token punctuation">)</span> MethodImpl</code></pre>
+<p>void_method_0 creates a <code>MethodImpl</code> which doesn't have an argument and return value.</p>
 
 </section>
-		<section id="Msg2[A,-B].notify" class="doc-node">
-			<div class="title"><h2>fn (Msg2[A, B]) notify <a href="#Msg2[A,-B].notify">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg2<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token function">notify</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
-<p>notify sends a message without a return value.</p>
+		<section id="void_method_1" class="doc-node">
+			<div class="title"><h2>fn void_method_1 <a href="#void_method_1">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> void_method_1<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">]</span><span class="token punctuation">(</span>imp <span class="token keyword">fn</span> <span class="token punctuation">(</span>self Id<span class="token punctuation">,</span> cmd Sel<span class="token punctuation">,</span> a <span class="token builtin">A</span><span class="token punctuation">)</span><span class="token punctuation">)</span> MethodImpl</code></pre>
+<p>void_method_1 creates a <code>MethodImpl</code> which has one argument and no return value.</p>
 
 </section>
-		<section id="Msg3[A,-B,-D].request" class="doc-node">
-			<div class="title"><h2>fn (Msg3[A, B, D]) request <a href="#Msg3[A,-B,-D].request">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg3<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">,</span> <span class="token builtin">D</span><span class="token punctuation">]</span><span class="token punctuation">)</span> request<span class="token punctuation">[</span><span class="token builtin">R</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">R</span></code></pre>
-<p>request sends a message requesting for a value of type <code>R</code>.</p>
+		<section id="void_method_2" class="doc-node">
+			<div class="title"><h2>fn void_method_2 <a href="#void_method_2">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> void_method_2<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">]</span><span class="token punctuation">(</span>imp <span class="token keyword">fn</span> <span class="token punctuation">(</span>self Id<span class="token punctuation">,</span> cmd Sel<span class="token punctuation">,</span> a <span class="token builtin">A</span><span class="token punctuation">,</span> b <span class="token builtin">B</span><span class="token punctuation">)</span><span class="token punctuation">)</span> MethodImpl</code></pre>
+<p>void_method_2 creates a <code>MethodImpl</code> which has two arguments and no return value.</p>
 
 </section>
-		<section id="Msg3[A,-B,-D].notify" class="doc-node">
-			<div class="title"><h2>fn (Msg3[A, B, D]) notify <a href="#Msg3[A,-B,-D].notify">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg3<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">,</span> <span class="token builtin">D</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token function">notify</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
-<p>notify sends a message without a return value.</p>
+		<section id="void_method_3" class="doc-node">
+			<div class="title"><h2>fn void_method_3 <a href="#void_method_3">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> void_method_3<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">,</span> <span class="token builtin">D</span><span class="token punctuation">]</span><span class="token punctuation">(</span>imp <span class="token keyword">fn</span> <span class="token punctuation">(</span>self Id<span class="token punctuation">,</span> cmd Sel<span class="token punctuation">,</span> a <span class="token builtin">A</span><span class="token punctuation">,</span> b <span class="token builtin">B</span><span class="token punctuation">,</span> d <span class="token builtin">D</span><span class="token punctuation">)</span><span class="token punctuation">)</span> MethodImpl</code></pre>
+<p>void_method_3 creates a <code>MethodImpl</code> which has three arguments and no return value.</p>
+
+</section>
+		<section id="MethodImpl" class="doc-node">
+			<div class="title"><h2>interface MethodImpl <a href="#MethodImpl">#</a></h2></div><pre class="signature"><code><span class="token keyword">interface</span> <span class="token symbol">MethodImpl</span> <span class="token punctuation">{</span>
+	<span class="token comment">// the function implementation.</span>
+	imp Imp
+	<span class="token comment">// encodings returns the encodings of the method.</span>
+	<span class="token function">encodings</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>ec<span class="token punctuation">.</span>Encoding
+<span class="token punctuation">}</span></code></pre>
+<p>An interface of the method implementation which can be added to a class declaration.</p>
+
+</section>
+		<section id="Msg1[A].request" class="doc-node">
+			<div class="title"><h2>fn (Msg1[A]) request <a href="#Msg1[A].request">#</a></h2></div><div class="attributes"><div class="attribute">unsafe</div></div>
+<pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg1<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">]</span><span class="token punctuation">)</span> request<span class="token punctuation">[</span><span class="token builtin">R</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">R</span></code></pre>
+<p>request sends a message requesting for a value of type <code>R</code>.<br>
+Unsafe because the caller must ensure the return type <code>R</code> and argument types match those of the Objective-C function.</p>
+
+</section>
+		<section id="Msg1[A].notify" class="doc-node">
+			<div class="title"><h2>fn (Msg1[A]) notify <a href="#Msg1[A].notify">#</a></h2></div><div class="attributes"><div class="attribute">unsafe</div></div>
+<pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg1<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token function">notify</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p>notify sends a message without a return value.<br>
+Unsafe because the caller must ensure the argument types match those of the Objective-C function.</p>
+
+</section>
+		<section id="Bool" class="doc-node">
+			<div class="title"><h2>type Bool <a href="#Bool">#</a></h2></div><pre class="signature"><code><span class="token keyword">type</span> Bool <span class="token operator">=</span> <span class="token builtin">bool</span></code></pre>
+<p>A type that represents a Boolean value in Objective-C.</p>
 
 </section>
 		<section id="Msg4[A,-B,-D,-E].request" class="doc-node">
-			<div class="title"><h2>fn (Msg4[A, B, D, E]) request <a href="#Msg4[A,-B,-D,-E].request">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg4<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">,</span> <span class="token builtin">D</span><span class="token punctuation">,</span> <span class="token builtin">E</span><span class="token punctuation">]</span><span class="token punctuation">)</span> request<span class="token punctuation">[</span><span class="token builtin">R</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">R</span></code></pre>
-<p>request sends a message requesting for a value of type <code>R</code>.</p>
+			<div class="title"><h2>fn (Msg4[A, B, D, E]) request <a href="#Msg4[A,-B,-D,-E].request">#</a></h2></div><div class="attributes"><div class="attribute">unsafe</div></div>
+<pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg4<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">,</span> <span class="token builtin">D</span><span class="token punctuation">,</span> <span class="token builtin">E</span><span class="token punctuation">]</span><span class="token punctuation">)</span> request<span class="token punctuation">[</span><span class="token builtin">R</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">R</span></code></pre>
+<p>request sends a message requesting for a value of type <code>R</code>.<br>
+Unsafe because the caller must ensure the return type <code>R</code> and argument types match those of the Objective-C function.</p>
 
 </section>
 		<section id="Msg4[A,-B,-D,-E].notify" class="doc-node">
-			<div class="title"><h2>fn (Msg4[A, B, D, E]) notify <a href="#Msg4[A,-B,-D,-E].notify">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg4<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">,</span> <span class="token builtin">D</span><span class="token punctuation">,</span> <span class="token builtin">E</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token function">notify</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
-<p>notify sends a message without a return value.</p>
+			<div class="title"><h2>fn (Msg4[A, B, D, E]) notify <a href="#Msg4[A,-B,-D,-E].notify">#</a></h2></div><div class="attributes"><div class="attribute">unsafe</div></div>
+<pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg4<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">,</span> <span class="token builtin">D</span><span class="token punctuation">,</span> <span class="token builtin">E</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token function">notify</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p>notify sends a message without a return value.<br>
+Unsafe because the caller must ensure the argument types match those of the Objective-C function.</p>
 
 </section>
 		<section id="MsgBuilder.args1" class="doc-node">
@@ -219,18 +329,46 @@ the class is not registered with the Objective-C runtime.</p>
 
 </section>
 		<section id="MsgBuilder.request" class="doc-node">
-			<div class="title"><h2>fn (MsgBuilder) request <a href="#MsgBuilder.request">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m MsgBuilder<span class="token punctuation">)</span> request<span class="token punctuation">[</span><span class="token builtin">R</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">R</span></code></pre>
-<p>request sends a message requesting a value of type <code>R</code>.</p>
+			<div class="title"><h2>fn (MsgBuilder) request <a href="#MsgBuilder.request">#</a></h2></div><div class="attributes"><div class="attribute">unsafe</div></div>
+<pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m MsgBuilder<span class="token punctuation">)</span> request<span class="token punctuation">[</span><span class="token builtin">R</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">R</span></code></pre>
+<p>request sends a message requesting a value of type <code>R</code>.<br>
+Unsafe because the caller must ensure the return type <code>R</code> matches that of the Objective-C function.</p>
 
 </section>
 		<section id="MsgBuilder.notify" class="doc-node">
-			<div class="title"><h2>fn (MsgBuilder) notify <a href="#MsgBuilder.notify">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m MsgBuilder<span class="token punctuation">)</span> <span class="token function">notify</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
-<p>notify sends a message without a return value.</p>
+			<div class="title"><h2>fn (MsgBuilder) notify <a href="#MsgBuilder.notify">#</a></h2></div><div class="attributes"><div class="attribute">unsafe</div></div>
+<pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m MsgBuilder<span class="token punctuation">)</span> <span class="token function">notify</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p>notify sends a message without a return value.<br>
+Unsafe because the caller must ensure the argument types match those of the Objective-C function.</p>
 
 </section>
-		<section id="Bool" class="doc-node">
-			<div class="title"><h2>type Bool <a href="#Bool">#</a></h2></div><pre class="signature"><code><span class="token keyword">type</span> Bool <span class="token operator">=</span> <span class="token builtin">bool</span></code></pre>
-<p>A type that represents a Boolean value in Objective-C.</p>
+		<section id="Sel" class="doc-node">
+			<div class="title"><h2>type Sel <a href="#Sel">#</a></h2></div><pre class="signature"><code><span class="token keyword">type</span> Sel <span class="token operator">=</span> <span class="token builtin">voidptr</span></code></pre>
+<p>A type that represents a method selector, <code>SEL</code>, in Objective-C.</p>
+
+</section>
+		<section id="Sel.Sel__static__get" class="doc-node">
+			<div class="title"><h2>fn (Sel) Sel__static__get <a href="#Sel.Sel__static__get">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> Sel<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">)</span> Sel</code></pre>
+<p>Sel.get registers a method with the Objective-C runtime system, maps the method name to a
+selector, and returns the selector value.</p>
+
+<section class="doc-node examples"><h4>Example</h4>
+<pre><code class="language-v">sel1 <span class="token operator">:=</span> Sel<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'new'</span><span class="token punctuation">)</span>
+sel2 <span class="token operator">:=</span> Sel<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'allocWithZone:'</span><span class="token punctuation">)</span></code></pre>
+</section>
+</section>
+		<section id="Msg2[A,-B].request" class="doc-node">
+			<div class="title"><h2>fn (Msg2[A, B]) request <a href="#Msg2[A,-B].request">#</a></h2></div><div class="attributes"><div class="attribute">unsafe</div></div>
+<pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg2<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">]</span><span class="token punctuation">)</span> request<span class="token punctuation">[</span><span class="token builtin">R</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">R</span></code></pre>
+<p>request sends a message requesting for a value of type <code>R</code>.<br>
+Unsafe because the caller must ensure the return type <code>R</code> and argument types match those of the Objective-C function.</p>
+
+</section>
+		<section id="Msg2[A,-B].notify" class="doc-node">
+			<div class="title"><h2>fn (Msg2[A, B]) notify <a href="#Msg2[A,-B].notify">#</a></h2></div><div class="attributes"><div class="attribute">unsafe</div></div>
+<pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg2<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token function">notify</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p>notify sends a message without a return value.<br>
+Unsafe because the caller must ensure the argument types match those of the Objective-C function.</p>
 
 </section>
 		<section id="Id.message" class="doc-node">
@@ -238,19 +376,47 @@ the class is not registered with the Objective-C runtime.</p>
 <p>message creates a message with the <code>id</code> as the receiver and <code>op</code> as the method selector.</p>
 
 </section>
-		<section id="Msg1[A].request" class="doc-node">
-			<div class="title"><h2>fn (Msg1[A]) request <a href="#Msg1[A].request">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg1<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">]</span><span class="token punctuation">)</span> request<span class="token punctuation">[</span><span class="token builtin">R</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">R</span></code></pre>
-<p>request sends a message requesting for a value of type <code>R</code>.</p>
+		<section id="Id.class" class="doc-node">
+			<div class="title"><h2>fn (Id) class <a href="#Id.class">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>id Id<span class="token punctuation">)</span> <span class="token function">class</span><span class="token punctuation">(</span><span class="token punctuation">)</span> Class</code></pre>
+<p>class returns the class of this instance.</p>
 
 </section>
-		<section id="Msg1[A].notify" class="doc-node">
-			<div class="title"><h2>fn (Msg1[A]) notify <a href="#Msg1[A].notify">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg1<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token function">notify</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
-<p>notify sends a message without a return value.</p>
+		<section id="Id.set_ivar" class="doc-node">
+			<div class="title"><h2>fn (Id) set_ivar <a href="#Id.set_ivar">#</a></h2></div><div class="attributes"><div class="attribute">unsafe</div></div>
+<pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>id Id<span class="token punctuation">)</span> set_ivar<span class="token punctuation">[</span><span class="token builtin">T</span><span class="token punctuation">]</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">,</span> value <span class="token builtin">T</span><span class="token punctuation">)</span></code></pre>
+<p>set_ivar sets the value of an instance variable.<br>
+Unsafe because the caller must ensure the ivar is actually of type <code>T</code>.</p>
+
+</section>
+		<section id="Id.get_ivar" class="doc-node">
+			<div class="title"><h2>fn (Id) get_ivar <a href="#Id.get_ivar">#</a></h2></div><div class="attributes"><div class="attribute">unsafe</div></div>
+<pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>id Id<span class="token punctuation">)</span> get_ivar<span class="token punctuation">[</span><span class="token builtin">T</span><span class="token punctuation">]</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">T</span></code></pre>
+<p>set_ivar returns the value of an instance variable.<br>
+Unsafe because the caller must ensure the ivar is actually of type <code>T</code>.</p>
+
+</section>
+		<section id="Imp" class="doc-node">
+			<div class="title"><h2>type Imp <a href="#Imp">#</a></h2></div><pre class="signature"><code><span class="token keyword">type</span> Imp <span class="token operator">=</span> <span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p>A pointer to the start of a method implementation.</p>
+
+</section>
+		<section id="Msg3[A,-B,-D].request" class="doc-node">
+			<div class="title"><h2>fn (Msg3[A, B, D]) request <a href="#Msg3[A,-B,-D].request">#</a></h2></div><div class="attributes"><div class="attribute">unsafe</div></div>
+<pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg3<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">,</span> <span class="token builtin">D</span><span class="token punctuation">]</span><span class="token punctuation">)</span> request<span class="token punctuation">[</span><span class="token builtin">R</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">R</span></code></pre>
+<p>request sends a message requesting for a value of type <code>R</code>.<br>
+Unsafe because the caller must ensure the return type <code>R</code> and argument types match those of the Objective-C function.</p>
+
+</section>
+		<section id="Msg3[A,-B,-D].notify" class="doc-node">
+			<div class="title"><h2>fn (Msg3[A, B, D]) notify <a href="#Msg3[A,-B,-D].notify">#</a></h2></div><div class="attributes"><div class="attribute">unsafe</div></div>
+<pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>m Msg3<span class="token punctuation">[</span><span class="token builtin">A</span><span class="token punctuation">,</span> <span class="token builtin">B</span><span class="token punctuation">,</span> <span class="token builtin">D</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token function">notify</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p>notify sends a message without a return value.<br>
+Unsafe because the caller must ensure the argument types match those of the Objective-C function.</p>
 
 </section>
 		<section id="Class" class="doc-node">
 			<div class="title"><h2>struct Class <a href="#Class">#</a></h2></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Class</span> <span class="token punctuation">{</span>
-	ptr <span class="token operator">&</span>C<span class="token punctuation">.</span>objc_object <span class="token punctuation">[</span>required<span class="token punctuation">]</span> <span class="token comment">// the Objective-C Class object</span>
+	ptr <span class="token builtin">voidptr</span> <span class="token punctuation">[</span>required<span class="token punctuation">]</span> <span class="token comment">// the Objective-C Class object</span>
 <span class="token punctuation">}</span></code></pre>
 <p>A type that represents an Objective-C class.</p>
 
@@ -266,42 +432,116 @@ the class is not registered with the Objective-C runtime.</p>
 <p>message creates a message with the class instance as the receiver and <code>op</code> as the method selector.</p>
 
 </section>
-		<section id="Sel" class="doc-node">
-			<div class="title"><h2>struct Sel <a href="#Sel">#</a></h2></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Sel</span> <span class="token punctuation">{</span>
-	ptr <span class="token operator">&</span>C<span class="token punctuation">.</span>objc_selector <span class="token punctuation">[</span>required<span class="token punctuation">]</span>
+		<section id="Class.instance_variable" class="doc-node">
+			<div class="title"><h2>fn (Class) instance_variable <a href="#Class.instance_variable">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>c Class<span class="token punctuation">)</span> <span class="token function">instance_variable</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">?</span>Ivar</code></pre>
+<p>instance_variable returns the <code>Ivar</code> for a specified instance variable of a given class.</p>
+
+</section>
+		<section id="ClassDecl" class="doc-node">
+			<div class="title"><h2>struct ClassDecl <a href="#ClassDecl">#</a></h2></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">ClassDecl</span> <span class="token punctuation">{</span>
+	cls <span class="token builtin">voidptr</span> <span class="token punctuation">[</span>required<span class="token punctuation">]</span> <span class="token comment">// the Objective-C Class object</span>
 <span class="token punctuation">}</span></code></pre>
-<p>A type that represents a method selector, <code>SEL</code>, in Objective-C.</p>
+<p>A type used to declare a new class.</p>
 
 </section>
-		<section id="Sel.Sel__static__get" class="doc-node">
-			<div class="title"><h2>fn (Sel) Sel__static__get <a href="#Sel.Sel__static__get">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> Sel<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">)</span> Sel</code></pre>
-<p>Sel.get registers a method with the Objective-C runtime system, maps the method name to a
-selector, and returns the selector value.</p>
+		<section id="ClassDecl.ClassDecl__static__new" class="doc-node">
+			<div class="title"><h2>fn (ClassDecl) ClassDecl__static__new <a href="#ClassDecl.ClassDecl__static__new">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> ClassDecl<span class="token punctuation">.</span><span class="token function">new</span><span class="token punctuation">(</span>superclass Class<span class="token punctuation">,</span> name <span class="token builtin">string</span><span class="token punctuation">,</span> extra_bytes <span class="token builtin">usize</span><span class="token punctuation">)</span> <span class="token operator">?</span>ClassDecl</code></pre>
+<p>ClassDecl.new creates a new class. It returns <code>none</code> if the class could not be created (for example,
+the desired name is already in use).</p>
 
-<section class="doc-node examples"><h4>Example</h4>
-<pre><code class="language-v">sel1 <span class="token operator">:=</span> Sel<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'new'</span><span class="token punctuation">)</span>
-sel2 <span class="token operator">:=</span> Sel<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'allocWithZone:'</span><span class="token punctuation">)</span></code></pre>
 </section>
+		<section id="ClassDecl.add_ivar" class="doc-node">
+			<div class="title"><h2>fn (ClassDecl) add_ivar <a href="#ClassDecl.add_ivar">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>d ClassDecl<span class="token punctuation">)</span> add_ivar<span class="token punctuation">[</span><span class="token builtin">T</span><span class="token punctuation">]</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
+<p>add_ivar adds a new instance variable of type <code>T</code> to a class.</p>
+
+</section>
+		<section id="ClassDecl.add_method" class="doc-node">
+			<div class="title"><h2>fn (ClassDecl) add_method <a href="#ClassDecl.add_method">#</a></h2></div><div class="attributes"><div class="attribute">unsafe</div></div>
+<pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>d ClassDecl<span class="token punctuation">)</span> <span class="token function">add_method</span><span class="token punctuation">(</span>name Sel<span class="token punctuation">,</span> method MethodImpl<span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
+<p>add_method adds a new method to a class.<br>
+Unsafe because the caller must ensure the method type matches that is expected by Objective-C.</p>
+
+</section>
+		<section id="ClassDecl.register" class="doc-node">
+			<div class="title"><h2>fn (ClassDecl) register <a href="#ClassDecl.register">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>d ClassDecl<span class="token punctuation">)</span> <span class="token function">register</span><span class="token punctuation">(</span><span class="token punctuation">)</span> Class</code></pre>
+<p>register registers the class.</p>
+
+</section>
+		<section id="Ivar" class="doc-node">
+			<div class="title"><h2>struct Ivar <a href="#Ivar">#</a></h2></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Ivar</span> <span class="token punctuation">{</span>
+	ptr <span class="token builtin">voidptr</span> <span class="token punctuation">[</span>required<span class="token punctuation">]</span>
+<span class="token punctuation">}</span></code></pre>
+<p>A type that represents an instance variable in an Objective-C class.</p>
+
+</section>
+		<section id="Ivar.name" class="doc-node">
+			<div class="title"><h2>fn (Ivar) name <a href="#Ivar.name">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>v Ivar<span class="token punctuation">)</span> <span class="token function">name</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+<p>name returns the name of an instance variable.</p>
+
+</section>
+		<section id="Ivar.type_encoding" class="doc-node">
+			<div class="title"><h2>fn (Ivar) type_encoding <a href="#Ivar.type_encoding">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>v Ivar<span class="token punctuation">)</span> <span class="token function">type_encoding</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+<p>type_encoding returns the type string of an instance variable.</p>
+
+</section>
+		<section id="Ivar.offset" class="doc-node">
+			<div class="title"><h2>fn (Ivar) offset <a href="#Ivar.offset">#</a></h2></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>v Ivar<span class="token punctuation">)</span> <span class="token function">offset</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">isize</span></code></pre>
+<p>offset returns the offset of an instance variable.</p>
+
 </section>
 
-						<div class="footer">Powered by vdoc. Generated on: 8 Sep 2023 09:20:51</div>
+						<div class="footer">Powered by vdoc. Generated on: 23 Oct 2023 07:08:28</div>
 					</div>
 					<div class="doc-toc"><ul><li class="open"><a href="#readme_objc">README</a></li>
 <li class="open"><a href="#Constants">Constants</a></li>
-<li class="open"><a href="#sel">fn sel</a>        <ul>
-</ul>
-</li>
 <li class="open"><a href="#class">fn class</a>        <ul>
 </ul>
 </li>
-<li class="open"><a href="#Msg2[A,-B].request">type Msg2[A, B]</a>        <ul>
-<li><a href="#Msg2[A,-B].request">fn request</a></li>
-<li><a href="#Msg2[A,-B].notify">fn notify</a></li>
+<li class="open"><a href="#void_method_4">fn void_method_4</a>        <ul>
 </ul>
 </li>
-<li class="open"><a href="#Msg3[A,-B,-D].request">type Msg3[A, B, D]</a>        <ul>
-<li><a href="#Msg3[A,-B,-D].request">fn request</a></li>
-<li><a href="#Msg3[A,-B,-D].notify">fn notify</a></li>
+<li class="open"><a href="#encode">fn encode</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#method_0">fn method_0</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#method_1">fn method_1</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#method_2">fn method_2</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#method_3">fn method_3</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#method_4">fn method_4</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#sel">fn sel</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#void_method_0">fn void_method_0</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#void_method_1">fn void_method_1</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#void_method_2">fn void_method_2</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#void_method_3">fn void_method_3</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#MethodImpl">interface MethodImpl</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Msg1[A].request">type Msg1[A]</a>        <ul>
+<li><a href="#Msg1[A].request">fn request</a></li>
+<li><a href="#Msg1[A].notify">fn notify</a></li>
+</ul>
+</li>
+<li class="open"><a href="#Bool">type Bool</a>        <ul>
 </ul>
 </li>
 <li class="open"><a href="#Msg4[A,-B,-D,-E].request">type Msg4[A, B, D, E]</a>        <ul>
@@ -318,25 +558,47 @@ sel2 <span class="token operator">:=</span> Sel<span class="token punctuation">.
 <li><a href="#MsgBuilder.notify">fn notify</a></li>
 </ul>
 </li>
-<li class="open"><a href="#Bool">type Bool</a>        <ul>
+<li class="open"><a href="#Sel">type Sel</a>        <ul>
+<li><a href="#Sel.Sel__static__get">fn Sel__static__get</a></li>
+</ul>
+</li>
+<li class="open"><a href="#Msg2[A,-B].request">type Msg2[A, B]</a>        <ul>
+<li><a href="#Msg2[A,-B].request">fn request</a></li>
+<li><a href="#Msg2[A,-B].notify">fn notify</a></li>
 </ul>
 </li>
 <li class="open"><a href="#Id.message">type Id</a>        <ul>
 <li><a href="#Id.message">fn message</a></li>
+<li><a href="#Id.class">fn class</a></li>
+<li><a href="#Id.set_ivar">fn set_ivar</a></li>
+<li><a href="#Id.get_ivar">fn get_ivar</a></li>
 </ul>
 </li>
-<li class="open"><a href="#Msg1[A].request">type Msg1[A]</a>        <ul>
-<li><a href="#Msg1[A].request">fn request</a></li>
-<li><a href="#Msg1[A].notify">fn notify</a></li>
+<li class="open"><a href="#Imp">type Imp</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Msg3[A,-B,-D].request">type Msg3[A, B, D]</a>        <ul>
+<li><a href="#Msg3[A,-B,-D].request">fn request</a></li>
+<li><a href="#Msg3[A,-B,-D].notify">fn notify</a></li>
 </ul>
 </li>
 <li class="open"><a href="#Class">struct Class</a>        <ul>
 <li><a href="#Class.Class__static__get">fn Class__static__get</a></li>
 <li><a href="#Class.message">fn message</a></li>
+<li><a href="#Class.instance_variable">fn instance_variable</a></li>
 </ul>
 </li>
-<li class="open"><a href="#Sel">struct Sel</a>        <ul>
-<li><a href="#Sel.Sel__static__get">fn Sel__static__get</a></li>
+<li class="open"><a href="#ClassDecl">struct ClassDecl</a>        <ul>
+<li><a href="#ClassDecl.ClassDecl__static__new">fn ClassDecl__static__new</a></li>
+<li><a href="#ClassDecl.add_ivar">fn add_ivar</a></li>
+<li><a href="#ClassDecl.add_method">fn add_method</a></li>
+<li><a href="#ClassDecl.register">fn register</a></li>
+</ul>
+</li>
+<li class="open"><a href="#Ivar">struct Ivar</a>        <ul>
+<li><a href="#Ivar.name">fn name</a></li>
+<li><a href="#Ivar.type_encoding">fn type_encoding</a></li>
+<li><a href="#Ivar.offset">fn offset</a></li>
 </ul>
 </li>
 </ul></div>

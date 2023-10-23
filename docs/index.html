@@ -36,7 +36,7 @@
 						<div class="info">
 							<div class="module">objc</div>
 							<div class="toggle-version-container">
-								<span>0.0.1 6813a12</span>
+								<span>0.0.2 44045c6</span>
 								<div
 									id="dark-mode-toggle"
 									role="switch"
@@ -59,7 +59,7 @@
 				<nav class="search hidden"></nav>
 				<nav class="content hidden">
 					<ul>
-						<li class="open active"><div class="menu-row"><a href="./index.html">README</a></div></li><li class="open"><div class="menu-row"><a href="./objc.html">objc</a></div></li>
+						<li class="open active"><div class="menu-row"><a href="./index.html">README</a></div></li><li class="open"><div class="menu-row"><a href="./encode.html">encode</a></div></li><li class="open"><div class="menu-row"><a href="./main.html">main</a></div></li><li class="open"><div class="menu-row"><a href="./objc.html">objc</a></div></li>
 					</ul>
 				</nav>
 			</header>
@@ -70,7 +70,7 @@
 			<div class="title"><h1> README</h1></div><p>This vlang package provides Objective-C Runtime bindings for V.</p>
 <h2>Status</h2>
 <p>It is currently working in progress and should be considered experimental. It's only tested on
-x86_64 architecture, macOS Ventura 13.5.</p>
+x86_64 architecture, macOS Sonoma 14.0.</p>
 <p>Supported features:</p>
 <ul>
 <li>Bool type</li>
@@ -79,6 +79,7 @@ x86_64 architecture, macOS Ventura 13.5.</p>
 <li>Create instances</li>
 <li>Register selectors</li>
 <li>Send messages (varargs are not supported)</li>
+<li>Class declaration</li>
 </ul>
 <h2>Installation</h2>
 <pre><code class="language-shell">v install magic003.objc
@@ -105,27 +106,68 @@ s2 := objc.sel('init')
 <li><code>request[R]()</code>: a message with return type <code>R</code>.</li>
 <li><code>notify()</code>: a message without a return value.</li>
 </ul>
-<pre><code class="language-v">// a mutable array instance is created via chained messages
-arr := cls1.message(objc.sel('alloc')).request[objc.Id]()
-        .message(objc.sel('init')).request[objc.Id]()
+<pre><code class="language-v">unsafe {
+    // a mutable array instance is created via chained messages
+    arr := cls1.message(objc.sel('alloc')).request[objc.Id]()
+            .message(objc.sel('init')).request[objc.Id]()
 
-// load the NSObject class and create an instance
-obj_cls := objc.class('NSObject') or { panic('failed to load class NSObject') }
-obj := obj_cls.message(sel('new')).request[objc.Id]()
+    // load the NSObject class and create an instance
+    obj_cls := objc.class('NSObject') or { panic('failed to load class NSObject') }
+    obj := obj_cls.message(sel('new')).request[objc.Id]()
 
-// add an object to the array. Message with one argument and no return value. 
-// Use `args2()`, `args3()` and etc for more arguments.
-arr.message(sel('addObject:')).args1(obj).notify()
+    // add an object to the array. Message with one argument and no return value. 
+    // Use `args2()`, `args3()` and etc for more arguments.
+    arr.message(sel('addObject:')).args1(obj).notify()
 
-// message without an argument.
-size := arr.message(sel('count')).request[u64]()
-assert size == 1
+    // message without an argument.
+    size := arr.message(sel('count')).request[u64]()
+    assert size == 1
+}
+</code></pre>
+<h3>Declare a new class</h3>
+<p>New classes can be declared and registered with the Objective-C Runtime.</p>
+<pre><code class="language-v">superclass := objc.class('NSObject') or { panic('failed to load class NSObject') }
+// create a new class with `NSObject` as the super class.
+decl := ClassDecl.new(superclass, 'NewClass', 0) or {
+    panic('failed to create class NewClass')
+}
+
+// add ivars
+decl.add_ivar[i64]('num')
+decl.add_ivar[objc.Id]('obj')
+
+// add methods
+m1 := objc.void_method_1[bool](fn (self objc.Id, cmd objc.Sel, flag bool) {
+    // do something
+})
+unsafe { decl.add_method(objc.sel('method1:'), m1) }
+m2: = objc.method_1[int, objc.Id](fn (self objc.Id, cmd objc.Sel, obj objc.Id) int {
+    return 10
+})
+unsafe { delc.add_method(objc.sel('method2:'), m2) }
+
+// register the class
+cls := decl.register()
+
+unsafe {
+    // create an instance from the new class
+    obj := cls.message(objc.sel('new')).request[objc.Id]()
+    
+    // set ivar
+    obj.set_ivar('num', 1)
+
+    // call method
+    obj.message(objc.sel('method1:')).args1(true).notify()
+}
 </code></pre>
 <h2>Examples</h2>
 <p>The unit tests have basic usages.</p>
 <p>Check out the <code>examples</code> folder for more examples.</p>
 <h2>Documentation</h2>
-<p>Documentation: <a href="http://magic003.github.io/objc">http://magic003.github.io/objc</a></p>
+<ul>
+<li>API Documentation: <a href="http://magic003.github.io/objc">http://magic003.github.io/objc</a></li>
+<li>Why this project: <a href="https://open.substack.com/pub/insideout101/p/v-and-objective-c-interoperability?r=2rxz0s&amp;utm_campaign=post&amp;utm_medium=web">V and Objective-C interoperability</a></li>
+</ul>
 <h2>References</h2>
 <ul>
 <li><a href="https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC">Programming with Objective-C</a></li>
@@ -136,7 +178,7 @@ assert size == 1
 </section>
 
 
-						<div class="footer">Powered by vdoc. Generated on: 8 Sep 2023 09:20:51</div>
+						<div class="footer">Powered by vdoc. Generated on: 23 Oct 2023 07:08:28</div>
 					</div>
 					
 				</div>
