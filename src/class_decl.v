@@ -23,12 +23,11 @@ pub fn ClassDecl.new(superclass Class, name string, extra_bytes usize) ?ClassDec
 // add_ivar adds a new instance variable of type `T` to a class.
 pub fn (d ClassDecl) add_ivar[T](name string) bool {
 	size := sizeof(T)
-	// WARNING: this may not work in all circumstances. It's not the optimal solution either.
-	// It assumes:
-	//   * sizeof(T) >= alignOf(T)
-	//   * sizeof(T) is always a power of 2
+	// WARNING: this is not the optimal solution. It uses the pointer size as the alignment for all types.
+	// For type whose size is smaller, it may take more memory unnecessarily.
+	min_alignment := sizeof(voidptr)
 	// log2 of a power of 2 is the number of trailing zeros.
-	log2_alignment := u8(bits.trailing_zeros_32(size))
+	log2_alignment := u8(bits.trailing_zeros_32(min_alignment))
 	types := encode[T]() or { panic(err) }
 	return C.class_addIvar(d.cls, &char(name.str), size, log2_alignment, &char(types.str().str))
 }
