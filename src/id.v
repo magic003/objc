@@ -28,7 +28,6 @@ pub fn (id Id) set_ivar[T](name string, value T) {
 	} else {
 		unsafe {
 			mut ptr := &u8(voidptr(id))
-			println('${name} offset: ${ivar.offset()}')
 			ptr = ptr + ivar.offset()
 			*ptr = value
 		}
