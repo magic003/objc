@@ -244,8 +244,8 @@ pub fn Encoding.sel() Encoding {
 
 // An Array.
 struct Array {
-	len int      [required]
-	tp  Encoding [required]
+	len int      @[required]
+	tp  Encoding @[required]
 }
 
 pub fn Encoding.array(len int, tp Encoding) Encoding {
@@ -254,8 +254,8 @@ pub fn Encoding.array(len int, tp Encoding) Encoding {
 
 // A structure.
 struct Struct {
-	name   string     [required]
-	fields []Encoding [required]
+	name   string     @[required]
+	fields []Encoding @[required]
 }
 
 pub fn Encoding.@struct(name string, fields []Encoding) Encoding {
@@ -264,8 +264,8 @@ pub fn Encoding.@struct(name string, fields []Encoding) Encoding {
 
 // A union.
 struct Union {
-	name   string     [required]
-	fields []Encoding [required]
+	name   string     @[required]
+	fields []Encoding @[required]
 }
 
 pub fn Encoding.@union(name string, fields []Encoding) Encoding {
@@ -274,7 +274,7 @@ pub fn Encoding.@union(name string, fields []Encoding) Encoding {
 
 // A bit field of num bits.
 struct BitField {
-	bits int [required]
+	bits int @[required]
 }
 
 pub fn Encoding.bit_field(bits int) Encoding {
@@ -283,7 +283,7 @@ pub fn Encoding.bit_field(bits int) Encoding {
 
 // A pointer to type.
 struct Pointer {
-	tp Encoding [required]
+	tp Encoding @[required]
 }
 
 pub fn Encoding.pointer(tp Encoding) Encoding {

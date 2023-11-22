@@ -17,9 +17,9 @@ pub fn void_method_0(imp fn (self Id, cmd Sel)) MethodImpl {
 	}
 }
 
-[noinit]
+@[noinit]
 struct VoidMethod0 {
-	imp Imp [required]
+	imp Imp @[required]
 }
 
 fn (m VoidMethod0) encodings() []ec.Encoding {
@@ -35,9 +35,9 @@ pub fn method_0[R](imp fn (self Id, cmd Sel) R) MethodImpl {
 	}
 }
 
-[noinit]
+@[noinit]
 struct Method0[R] {
-	imp Imp [required]
+	imp Imp @[required]
 }
 
 fn (m Method0[R]) encodings() []ec.Encoding {
@@ -54,9 +54,9 @@ pub fn void_method_1[A](imp fn (self Id, cmd Sel, a A)) MethodImpl {
 	}
 }
 
-[noinit]
+@[noinit]
 struct VoidMethod1[A] {
-	imp Imp [required]
+	imp Imp @[required]
 }
 
 fn (m VoidMethod1[A]) encodings() []ec.Encoding {
@@ -73,9 +73,9 @@ pub fn method_1[R, A](imp fn (self Id, cmd Sel, a A) R) MethodImpl {
 	}
 }
 
-[noinit]
+@[noinit]
 struct Method1[R, A] {
-	imp Imp [required]
+	imp Imp @[required]
 }
 
 fn (m Method1[R, A]) encodings() []ec.Encoding {
@@ -93,9 +93,9 @@ pub fn void_method_2[A, B](imp fn (self Id, cmd Sel, a A, b B)) MethodImpl {
 	}
 }
 
-[noinit]
+@[noinit]
 struct VoidMethod2[A, B] {
-	imp Imp [required]
+	imp Imp @[required]
 }
 
 fn (m VoidMethod2[A, B]) encodings() []ec.Encoding {
@@ -113,9 +113,9 @@ pub fn method_2[R, A, B](imp fn (self Id, cmd Sel, a A, b B) R) MethodImpl {
 	}
 }
 
-[noinit]
+@[noinit]
 struct Method2[R, A, B] {
-	imp Imp [required]
+	imp Imp @[required]
 }
 
 fn (m Method2[R, A, B]) encodings() []ec.Encoding {
@@ -134,9 +134,9 @@ pub fn void_method_3[A, B, D](imp fn (self Id, cmd Sel, a A, b B, d D)) MethodIm
 	}
 }
 
-[noinit]
+@[noinit]
 struct VoidMethod3[A, B, D] {
-	imp Imp [required]
+	imp Imp @[required]
 }
 
 fn (m VoidMethod3[A, B, D]) encodings() []ec.Encoding {
@@ -155,9 +155,9 @@ pub fn method_3[R, A, B, D](imp fn (self Id, cmd Sel, a A, b B, d D) R) MethodIm
 	}
 }
 
-[noinit]
+@[noinit]
 struct Method3[R, A, B, D] {
-	imp Imp [required]
+	imp Imp @[required]
 }
 
 fn (m Method3[R, A, B, D]) encodings() []ec.Encoding {
@@ -177,9 +177,9 @@ pub fn void_method_4[A, B, D, E](imp fn (self Id, cmd Sel, a A, b B, d D, e E)) 
 	}
 }
 
-[noinit]
+@[noinit]
 struct VoidMethod4[A, B, D, E] {
-	imp Imp [required]
+	imp Imp @[required]
 }
 
 fn (m VoidMethod4[A, B, D, E]) encodings() []ec.Encoding {
@@ -200,9 +200,9 @@ pub fn method_4[R, A, B, D, E](imp fn (self Id, cmd Sel, a A, b B, d D, e E) R) 
 	}
 }
 
-[noinit]
+@[noinit]
 struct Method4[R, A, B, D, E] {
-	imp Imp [required]
+	imp Imp @[required]
 }
 
 fn (m Method4[R, A, B, D, E]) encodings() []ec.Encoding {

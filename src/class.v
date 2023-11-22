@@ -1,9 +1,9 @@
 module objc
 
 // A type that represents an Objective-C class.
-[noinit]
+@[noinit]
 pub struct Class {
-	ptr voidptr [required] // the Objective-C Class object
+	ptr voidptr @[required] // the Objective-C Class object
 }
 
 // Class.get returns the class definition of a specified class. It returns `none` if

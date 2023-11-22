@@ -1,10 +1,10 @@
 module objc
 
 // A message builder.
-[noinit]
+@[noinit]
 struct MsgBuilder {
-	id Id  [required]
-	op Sel [required]
+	id Id  @[required]
+	op Sel @[required]
 }
 
 // args1 adds 1 argument to the message.
@@ -29,108 +29,108 @@ pub fn (m MsgBuilder) args4[A, B, D, E](a A, b B, d D, e E) Msg4[A, B, D, E] {
 
 // request sends a message requesting a value of type `R`.
 // Unsafe because the caller must ensure the return type `R` matches that of the Objective-C function.
-[unsafe]
+@[unsafe]
 pub fn (m MsgBuilder) request[R]() R {
 	return send_msg_0[R](m.id, m.op)
 }
 
 // notify sends a message without a return value.
 // Unsafe because the caller must ensure the argument types match those of the Objective-C function.
-[unsafe]
+@[unsafe]
 pub fn (m MsgBuilder) notify() {
 	send_msg_0[Id](m.id, m.op)
 }
 
 // A type that represents a message having 1 argument.
-[noinit]
+@[noinit]
 struct Msg1[A] {
-	id Id  [required]
-	op Sel [required]
-	a  A   [required]
+	id Id  @[required]
+	op Sel @[required]
+	a  A   @[required]
 }
 
 // request sends a message requesting for a value of type `R`.
 // Unsafe because the caller must ensure the return type `R` and argument types match those of the Objective-C function.
-[unsafe]
+@[unsafe]
 pub fn (m Msg1[A]) request[R]() R {
 	return send_msg_1[R, A](m.id, m.op, m.a)
 }
 
 // notify sends a message without a return value.
 // Unsafe because the caller must ensure the argument types match those of the Objective-C function.
-[unsafe]
+@[unsafe]
 pub fn (m Msg1[A]) notify() {
 	send_msg_1[Id, A](m.id, m.op, m.a)
 }
 
 // A type that represents a message having 2 arguments.
-[noinit]
+@[noinit]
 struct Msg2[A, B] {
-	id Id  [required]
-	op Sel [required]
-	a  A   [required]
-	b  B   [required]
+	id Id  @[required]
+	op Sel @[required]
+	a  A   @[required]
+	b  B   @[required]
 }
 
 // request sends a message requesting for a value of type `R`.
 // Unsafe because the caller must ensure the return type `R` and argument types match those of the Objective-C function.
-[unsafe]
+@[unsafe]
 pub fn (m Msg2[A, B]) request[R]() R {
 	return send_msg_2[R, A, B](m.id, m.op, m.a, m.b)
 }
 
 // notify sends a message without a return value.
 // Unsafe because the caller must ensure the argument types match those of the Objective-C function.
-[unsafe]
+@[unsafe]
 pub fn (m Msg2[A, B]) notify() {
 	send_msg_2[Id, A, B](m.id, m.op, m.a, m.b)
 }
 
 // A type that represents a message having 3 arguments.
-[noinit]
+@[noinit]
 struct Msg3[A, B, D] {
-	id Id  [required]
-	op Sel [required]
-	a  A   [required]
-	b  B   [required]
-	d  D   [required]
+	id Id  @[required]
+	op Sel @[required]
+	a  A   @[required]
+	b  B   @[required]
+	d  D   @[required]
 }
 
 // request sends a message requesting for a value of type `R`.
 // Unsafe because the caller must ensure the return type `R` and argument types match those of the Objective-C function.
-[unsafe]
+@[unsafe]
 pub fn (m Msg3[A, B, D]) request[R]() R {
 	return send_msg_3[R, A, B, D](m.id, m.op, m.a, m.b, m.d)
 }
 
 // notify sends a message without a return value.
 // Unsafe because the caller must ensure the argument types match those of the Objective-C function.
-[unsafe]
+@[unsafe]
 pub fn (m Msg3[A, B, D]) notify() {
 	send_msg_3[Id, A, B, D](m.id, m.op, m.a, m.b, m.d)
 }
 
 // A type that represents a message having 4 arguments.
-[noinit]
+@[noinit]
 struct Msg4[A, B, D, E] {
-	id Id  [required]
-	op Sel [required]
-	a  A   [required]
-	b  B   [required]
-	d  D   [required]
-	e  E   [required]
+	id Id  @[required]
+	op Sel @[required]
+	a  A   @[required]
+	b  B   @[required]
+	d  D   @[required]
+	e  E   @[required]
 }
 
 // request sends a message requesting for a value of type `R`.
 // Unsafe because the caller must ensure the return type `R` and argument types match those of the Objective-C function.
-[unsafe]
+@[unsafe]
 pub fn (m Msg4[A, B, D, E]) request[R]() R {
 	return send_msg_4[R, A, B, D, E](m.id, m.op, m.a, m.b, m.d, m.e)
 }
 
 // notify sends a message without a return value.
 // Unsafe because the caller must ensure the argument types match those of the Objective-C function.
-[unsafe]
+@[unsafe]
 pub fn (m Msg4[A, B, D, E]) notify() {
 	send_msg_4[Id, A, B, D, E](m.id, m.op, m.a, m.b, m.d, m.e)
 }

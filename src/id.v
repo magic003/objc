@@ -20,7 +20,7 @@ pub fn (id Id) class() Class {
 
 // set_ivar sets the value of an instance variable.
 // Unsafe because the caller must ensure the ivar is actually of type `T`.
-[unsafe]
+@[unsafe]
 pub fn (id Id) set_ivar[T](name string, value T) {
 	ivar := id.class().instance_variable(name) or { panic('Ivar ${name} not found.') }
 	if typeof[T]() == typeof[Id]() {
@@ -36,7 +36,7 @@ pub fn (id Id) set_ivar[T](name string, value T) {
 
 // set_ivar returns the value of an instance variable.
 // Unsafe because the caller must ensure the ivar is actually of type `T`.
-[unsafe]
+@[unsafe]
 pub fn (id Id) get_ivar[T](name string) T {
 	ivar := id.class().instance_variable(name) or { panic('Ivar ${name} not found.') }
 	if typeof[T]() == typeof[Id]() {

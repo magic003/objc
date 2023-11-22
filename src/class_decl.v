@@ -3,9 +3,9 @@ module objc
 import math.bits
 
 // A type used to declare a new class.
-[noinit]
+@[noinit]
 pub struct ClassDecl {
-	cls voidptr [required] // the Objective-C Class object
+	cls voidptr @[required] // the Objective-C Class object
 }
 
 // ClassDecl.new creates a new class. It returns `none` if the class could not be created (for example,
@@ -34,7 +34,7 @@ pub fn (d ClassDecl) add_ivar[T](name string) bool {
 
 // add_method adds a new method to a class.
 // Unsafe because the caller must ensure the method type matches that is expected by Objective-C.
-[unsafe]
+@[unsafe]
 pub fn (d ClassDecl) add_method(name Sel, method MethodImpl) bool {
 	types := method.encodings().map(it.str()).join('')
 	return C.class_addMethod(d.cls, name, method.imp, &char(types.str))

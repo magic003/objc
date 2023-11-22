@@ -23,9 +23,9 @@ const ns_ascii_string_encoding = u64(1)
 
 const ns_square_status_item_length = f64(-2.0)
 
-[heap]
+@[heap]
 struct TrayApp {
-	app objc.Id [required] // NSApplication object
+	app objc.Id @[required] // NSApplication object
 }
 
 fn TrayApp.new() TrayApp {
@@ -89,8 +89,8 @@ fn (app &TrayApp) build_menu() objc.Id {
 }
 
 struct MenuItem {
-	id   string [required]
-	text string [required]
+	id   string @[required]
+	text string @[required]
 }
 
 fn new_ns_string(str string) objc.Id {

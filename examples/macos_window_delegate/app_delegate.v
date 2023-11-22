@@ -7,7 +7,7 @@ import magic003.objc { class, sel, void_method_1 }
 #flag -framework Foundation
 #flag -framework Cocoa
 
-[typedef]
+@[typedef]
 pub struct C.NSRect {}
 
 fn C.NSMakeRect(x f64, y f64, w f64, h f64) C.NSRect
@@ -38,9 +38,9 @@ const backing_store_type_buffered = u64(2)
 
 const ivar_app = 'app'
 
-[heap]
+@[heap]
 struct AppDelegate {
-	delegate objc.Id [required]
+	delegate objc.Id @[required]
 }
 
 fn AppDelegate.new(app objc.Id) AppDelegate {

@@ -7,7 +7,7 @@ module objc
 // ```v
 // cls := class('NSObject') or { panic('failed to load class NSObject') }
 // ```
-[inline]
+@[inline]
 pub fn class(name string) ?Class {
 	return Class.get(name)
 }
@@ -20,7 +20,7 @@ pub fn class(name string) ?Class {
 // sel1 := sel('new')
 // sel2 := sel('allocWithZone:')
 // ```
-[inline]
+@[inline]
 pub fn sel(name string) Sel {
 	return Sel.get(name)
 }

@@ -1,9 +1,9 @@
 module objc
 
 // A type that represents an instance variable in an Objective-C class.
-[noinit]
+@[noinit]
 pub struct Ivar {
-	ptr voidptr [required]
+	ptr voidptr @[required]
 }
 
 // name returns the name of an instance variable.

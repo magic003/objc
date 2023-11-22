@@ -24,7 +24,7 @@ struct C.CGRect {
 
 type CGRect = C.CGRect
 
-[objc_encoding_name: NSRect]
+@[objc_encoding_name: NSRect]
 struct Rect {
 	origin C.CGPoint
 	size   C.CGSize

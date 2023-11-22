@@ -62,23 +62,23 @@ type NSRect = C.NSRect
 type CGFloat = f64
 
 struct C.CGPoint {
-	x CGFloat [required]
-	y CGFloat [required]
+	x CGFloat @[required]
+	y CGFloat @[required]
 }
 
 type CGPoint = C.CGPoint
 
 struct C.CGSize {
-	height CGFloat [required]
-	width  CGFloat [required]
+	height CGFloat @[required]
+	width  CGFloat @[required]
 }
 
 type CGSize = C.CGSize
 
-[typedef]
+@[typedef]
 struct C.NSRect {
-	origin CGPoint [required]
-	size   CGSize  [required]
+	origin CGPoint @[required]
+	size   CGSize  @[required]
 }
 
 fn test_encode_alias() {
@@ -86,10 +86,10 @@ fn test_encode_alias() {
 	assert '{NSRect={CGPoint=dd}{CGSize=dd}}' == encode[NSRect]()!.str()
 }
 
-[objc_encoding_name: CGRect]
+@[objc_encoding_name: CGRect]
 struct NSRect2 {
-	origin CGPoint [required]
-	size   CGSize  [required]
+	origin CGPoint @[required]
+	size   CGSize  @[required]
 }
 
 fn test_encode_struct_name_attr() {
