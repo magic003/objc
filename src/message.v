@@ -190,14 +190,19 @@ fn send_msg_4[R, A, B, D, E](id Id, op Sel, a A, b B, d D, e E) R {
 
 // get_msg_send_fn determines which objc_msgSend* function to call based on `R`.
 fn get_msg_send_fn[R]() FnSendMsgGeneric {
-	// WARNING: this is a very naive way to decide calling objc_msgSend or objc_msgSend_stret.
-	// If the size of the return type is less or equal than the C pointer size, it assumes the value
-	// can be saved in registers and hence the objc_msgSend is used. Otherwise, objc_msgSend_stret
-	// is used. It is only tested on x86_64 and may not work on other architecture.
-	ptr_size := sizeof(voidptr)
-	if sizeof(R) <= ptr_size {
+	// issue #1. Always use objc_msgSend for Apple Silicon chips.
+	$if arm64 {
 		return C.objc_msgSend
-	} else {
-		return C.objc_msgSend_stret
+	} $else {
+		// WARNING: this is a very naive way to decide calling objc_msgSend or objc_msgSend_stret.
+		// If the size of the return type is less or equal than the C pointer size, it assumes the value
+		// can be saved in registers and hence the objc_msgSend is used. Otherwise, objc_msgSend_stret
+		// is used. It is only tested on x86_64 and may not work on other architecture.
+		ptr_size := sizeof(voidptr)
+		if sizeof(R) <= ptr_size {
+			return C.objc_msgSend
+		} else {
+			return C.objc_msgSend_stret
+		}
 	}
 }
