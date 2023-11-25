@@ -205,4 +205,8 @@ fn get_msg_send_fn[R]() FnSendMsgGeneric {
 			return C.objc_msgSend_stret
 		}
 	}
+
+	// TODO: this is needed according to the discussion in issue #1. Improved code in this function after
+	//	having an Apple Silicon device.
+	return C.objc_msgSend
 }
