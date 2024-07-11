@@ -1,8 +1,8 @@
 This vlang package provides Objective-C Runtime bindings for V.
 
 ## Status
-It is currently working in progress and should be considered experimental. It's only tested on 
-x86\_64 architecture, macOS Sonoma 14.0.
+It is currently work in progress and should be considered experimental. It's tested on 
+x86\_64 and arm64 (Apple Silicon) architectures, macOS Sonoma 14.5.
 
 Supported features:
 * Bool type
