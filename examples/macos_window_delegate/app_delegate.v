@@ -1,6 +1,6 @@
 module main
 
-import magic003.objc { class, sel, void_method_1 }
+	import magic003.objc { class, sel, void_method_1, method_1 }
 
 #include <Foundation/Foundation.h>
 #include <Cocoa/Cocoa.h>
@@ -83,6 +83,7 @@ fn register_app_delegate_class() objc.Class {
 		decl.add_ivar[objc.Id](ivar_app)
 		decl.add_method(sel('applicationWillFinishLaunching:'), void_method_1(application_will_finish_launching))
 		decl.add_method(sel('applicationDidFinishLaunching:'), void_method_1(application_did_finish_launching))
+		decl.add_method(sel('applicationShouldTerminateAfterLastWindowClosed:'), method_1(application_should_terminate_after_last_window_closed))
 	}
 	return decl.register()
 }
@@ -102,6 +103,10 @@ fn application_did_finish_launching(self objc.Id, cmd objc.Sel, notification obj
 	}
 }
 
+fn application_should_terminate_after_last_window_closed(self objc.Id, cmd objc.Sel, sender objc.Id) bool {
+	return true
+}
+			
 fn new_ns_string(str string) objc.Id {
 	unsafe {
 		data := ns_data_cls.message(sel('dataWithBytes:length:')).args2(str.str, str.len).request[objc.Id]()
