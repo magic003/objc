@@ -23,13 +23,16 @@ pub fn (id Id) class() Class {
 @[unsafe]
 pub fn (id Id) set_ivar[T](name string, value T) {
 	ivar := id.class().instance_variable(name) or { panic('Ivar ${name} not found.') }
-	if typeof[T]() == typeof[Id]() || typeof[T]() == typeof[voidptr]() {
-		C.object_setIvar(id, ivar.ptr, value)
+		
+	if typeof[T]() == typeof[Id]() {
+		C.object_setIvar(id, ivar.ptr, Id(value))
+	} else if typeof[T]() == typeof[voidptr]() {
+		C.object_setIvar(id, ivar.ptr, voidptr(value))
 	} else {
 		unsafe {
 			mut ptr := &u8(voidptr(id))
 			ptr = ptr + ivar.offset()
-			*ptr = value
+			*ptr = u8(value)
 		}
 	}
 }
@@ -39,6 +42,7 @@ pub fn (id Id) set_ivar[T](name string, value T) {
 @[unsafe]
 pub fn (id Id) get_ivar[T](name string) T {
 	ivar := id.class().instance_variable(name) or { panic('Ivar ${name} not found.') }
+		
 	if typeof[T]() == typeof[Id]() || typeof[T]() == typeof[voidptr]() {
 		return T(C.object_getIvar(id, ivar.ptr))
 	}
